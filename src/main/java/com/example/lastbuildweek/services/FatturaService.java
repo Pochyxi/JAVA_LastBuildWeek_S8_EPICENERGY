@@ -1,10 +1,12 @@
 package com.example.lastbuildweek.services;
 
 import com.example.lastbuildweek.entities.Fattura;
+import com.example.lastbuildweek.entities.StatoFattura;
 import com.example.lastbuildweek.repositories.FatturaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -49,7 +51,9 @@ public class FatturaService {
     }
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER STATO
-
+    public Page<Fattura> filterFatturaByStatoFattura( String stato, Pageable pageable ) {
+        return fatturaRepository.findFatturaByStatoFattura( StatoFattura.valueOf( stato ), pageable );
+    }
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER DATA(LOCALDATE)
     public Page<Fattura> filterFatturaByDataLocal( LocalDate data, Pageable p) {

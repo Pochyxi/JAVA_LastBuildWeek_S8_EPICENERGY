@@ -1,20 +1,13 @@
 package com.example.lastbuildweek.services;
 
 import com.example.lastbuildweek.entities.Cliente;
-import com.example.lastbuildweek.entities.RagioneSociale;
-import com.example.lastbuildweek.entities.User;
 import com.example.lastbuildweek.repositories.ClienteRepository;
-import com.example.lastbuildweek.utils.ClienteConverter;
+import com.example.lastbuildweek.utils.ClienteRequest;
 import com.example.lastbuildweek.utils.RagioneSocialeParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 
 
 import java.time.LocalDate;
@@ -44,25 +37,25 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
 
-    public Cliente createAndUpdate( ClienteConverter clienteConverter, int clienteId ) throws Exception {
+    public Cliente createAndUpdate( ClienteRequest clienteRequest, int clienteId ) throws Exception {
         Optional<Cliente> clienteFind = clienteRepository.findById( ( long ) clienteId );
         if( clienteFind.isPresent() ) {
             Cliente cliente = Cliente.builder()
                     .clienteId( clienteFind.get().getClienteId() )
-                    .partitaIva( clienteConverter.getPartitaIva() == 0 ? clienteFind.get().getPartitaIva() : clienteConverter.getPartitaIva() )
-                    .user( clienteConverter.getUserId() == 0 ? clienteFind.get().getUser() : userService.getById( ( long ) clienteConverter.getUserId() ) )
-                    .indirizzoLegale( clienteConverter.getIndirizzoLegaleId() == 0 ? clienteFind.get().getIndirizzoLegale() : indirizzoLegaleService.getById( ( long ) clienteConverter.getIndirizzoLegaleId() ) )
-                    .indirizzoOperativo( clienteConverter.getIndirizzoOperativoId() == 0 ?
-                            clienteFind.get().getIndirizzoOperativo() : indirizzoOperativoService.getById( ( long ) clienteConverter.getIndirizzoOperativoId() ) )
-                    .email( clienteConverter.getEmail() == null ? clienteFind.get().getEmail() : clienteConverter.getEmail() )
-                    .pec( clienteConverter.getPec() == null ? clienteFind.get().getPec() : clienteConverter.getPec() )
-                    .emailContatto( clienteConverter.getEmailContatto() == null ? clienteFind.get().getEmailContatto() : clienteConverter.getEmailContatto() )
-                    .nomeContatto( clienteConverter.getNomeContatto() == null ? clienteFind.get().getNomeContatto() : clienteConverter.getNomeContatto() )
-                    .cognomeContatto( clienteConverter.getCognomeContatto() == null ? clienteFind.get().getCognomeContatto() : clienteConverter.getCognomeContatto() )
-                    .telefonoContatto( clienteConverter.getTelefonoContatto() == null ?
-                            clienteFind.get().getTelefonoContatto() : clienteConverter.getTelefonoContatto() )
-                    .ragioneSociale( clienteConverter.getRagioneSociale() == null ? clienteFind.get().getRagioneSociale() : RagioneSocialeParser.parse( clienteConverter.getRagioneSociale() ) )
-                    .fatturatoAnnuo( clienteConverter.getFatturatoAnnuo() == 0 ? clienteFind.get().getFatturatoAnnuo() : clienteConverter.getFatturatoAnnuo() )
+                    .partitaIva( clienteRequest.getPartitaIva() == 0 ? clienteFind.get().getPartitaIva() : clienteRequest.getPartitaIva() )
+                    .user( clienteRequest.getUserId() == 0 ? clienteFind.get().getUser() : userService.getById( ( long ) clienteRequest.getUserId() ) )
+                    .indirizzoLegale( clienteRequest.getIndirizzoLegaleId() == 0 ? clienteFind.get().getIndirizzoLegale() : indirizzoLegaleService.getById( ( long ) clienteRequest.getIndirizzoLegaleId() ) )
+                    .indirizzoOperativo( clienteRequest.getIndirizzoOperativoId() == 0 ?
+                            clienteFind.get().getIndirizzoOperativo() : indirizzoOperativoService.getById( ( long ) clienteRequest.getIndirizzoOperativoId() ) )
+                    .email( clienteRequest.getEmail() == null ? clienteFind.get().getEmail() : clienteRequest.getEmail() )
+                    .pec( clienteRequest.getPec() == null ? clienteFind.get().getPec() : clienteRequest.getPec() )
+                    .emailContatto( clienteRequest.getEmailContatto() == null ? clienteFind.get().getEmailContatto() : clienteRequest.getEmailContatto() )
+                    .nomeContatto( clienteRequest.getNomeContatto() == null ? clienteFind.get().getNomeContatto() : clienteRequest.getNomeContatto() )
+                    .cognomeContatto( clienteRequest.getCognomeContatto() == null ? clienteFind.get().getCognomeContatto() : clienteRequest.getCognomeContatto() )
+                    .telefonoContatto( clienteRequest.getTelefonoContatto() == null ?
+                            clienteFind.get().getTelefonoContatto() : clienteRequest.getTelefonoContatto() )
+                    .ragioneSociale( clienteRequest.getRagioneSociale() == null ? clienteFind.get().getRagioneSociale() : RagioneSocialeParser.parse( clienteRequest.getRagioneSociale() ) )
+                    .fatturatoAnnuo( clienteRequest.getFatturatoAnnuo() == 0 ? clienteFind.get().getFatturatoAnnuo() : clienteRequest.getFatturatoAnnuo() )
                     .dataInserimento( clienteFind.get().getDataInserimento() )
                     .dataUltimoContatto( clienteFind.get().getDataUltimoContatto() )
                 .build();
@@ -76,21 +69,21 @@ public class ClienteService {
 
     ;
 
-    public Cliente createAndSave( ClienteConverter clienteConverter ) throws Exception {
+    public Cliente createAndSave( ClienteRequest clienteRequest ) throws Exception {
 
         Cliente cliente = Cliente.builder()
-                .partitaIva( clienteConverter.getPartitaIva() )
-                .user( userService.getById( ( long ) clienteConverter.getUserId() ) )
-                .indirizzoLegale( indirizzoLegaleService.getById( ( long ) clienteConverter.getIndirizzoLegaleId() ) )
-                .indirizzoOperativo( indirizzoOperativoService.getById( ( long ) clienteConverter.getIndirizzoOperativoId() ) )
-                .email( clienteConverter.getEmail() )
-                .pec( clienteConverter.getPec() )
-                .emailContatto( clienteConverter.getEmailContatto() )
-                .nomeContatto( clienteConverter.getNomeContatto() )
-                .cognomeContatto( clienteConverter.getCognomeContatto() )
-                .telefonoContatto( clienteConverter.getTelefonoContatto() )
-                .ragioneSociale( RagioneSocialeParser.parse( clienteConverter.getRagioneSociale() ) )
-                .fatturatoAnnuo( clienteConverter.getFatturatoAnnuo() )
+                .partitaIva( clienteRequest.getPartitaIva() )
+                .user( userService.getById( ( long ) clienteRequest.getUserId() ) )
+                .indirizzoLegale( indirizzoLegaleService.getById( ( long ) clienteRequest.getIndirizzoLegaleId() ) )
+                .indirizzoOperativo( indirizzoOperativoService.getById( ( long ) clienteRequest.getIndirizzoOperativoId() ) )
+                .email( clienteRequest.getEmail() )
+                .pec( clienteRequest.getPec() )
+                .emailContatto( clienteRequest.getEmailContatto() )
+                .nomeContatto( clienteRequest.getNomeContatto() )
+                .cognomeContatto( clienteRequest.getCognomeContatto() )
+                .telefonoContatto( clienteRequest.getTelefonoContatto() )
+                .ragioneSociale( RagioneSocialeParser.parse( clienteRequest.getRagioneSociale() ) )
+                .fatturatoAnnuo( clienteRequest.getFatturatoAnnuo() )
                 .dataInserimento( LocalDate.now() )
                 .dataUltimoContatto( LocalDate.now() )
                 .build();
