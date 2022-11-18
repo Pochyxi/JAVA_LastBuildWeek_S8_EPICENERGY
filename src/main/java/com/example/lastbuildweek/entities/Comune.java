@@ -20,8 +20,9 @@ public class Comune {
 
     private String nome;
 
-//    @ManyToOne
-//    @JoinColumn(name = "provincia_id")
-//    private Provincia provincia;
-    private String nomeProvincia;
+    @ManyToOne
+    @JoinColumn(name = "provincia_id")
+    @JsonManagedReference
+    private Provincia provincia;
+
 }

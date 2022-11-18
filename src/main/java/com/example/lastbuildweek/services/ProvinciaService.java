@@ -1,7 +1,5 @@
 package com.example.lastbuildweek.services;
 
-import com.example.lastbuildweek.entities.IndirizzoLegale;
-import com.example.lastbuildweek.entities.IndirizzoOperativo;
 import com.example.lastbuildweek.entities.Provincia;
 import com.example.lastbuildweek.repositories.ProvinciaRepository;
 import com.example.lastbuildweek.utils.CSVReader;
@@ -57,6 +55,13 @@ public class ProvinciaService {
 
     public Provincia getBySigla(String sigla) throws Exception {
         Optional< Provincia> provincia = provinciaRepository.findBySigla(sigla);
+        if ( provincia.isEmpty() )
+            throw new Exception("Provincia not available");
+        return provincia.get();
+    }
+
+    public Provincia getByNome(String nome) throws Exception {
+        Optional< Provincia> provincia = provinciaRepository.findByNome(nome);
         if ( provincia.isEmpty() )
             throw new Exception("Provincia not available");
         return provincia.get();

@@ -24,10 +24,8 @@ public class ClienteService {
     private UserService userService;
 
     @Autowired
-    private IndirizzoLegaleService indirizzoLegaleService;
+    private IndirizzoService indirizzoService;
 
-    @Autowired
-    private IndirizzoOperativoService indirizzoOperativoService;
 
     public void save( Cliente cliente ) {
         clienteRepository.save( cliente );
@@ -44,9 +42,11 @@ public class ClienteService {
                     .clienteId( clienteFind.get().getClienteId() )
                     .partitaIva( clienteRequest.getPartitaIva() == 0 ? clienteFind.get().getPartitaIva() : clienteRequest.getPartitaIva() )
                     .user( clienteRequest.getUserId() == 0 ? clienteFind.get().getUser() : userService.getById( ( long ) clienteRequest.getUserId() ) )
-                    .indirizzoLegale( clienteRequest.getIndirizzoLegaleId() == 0 ? clienteFind.get().getIndirizzoLegale() : indirizzoLegaleService.getById( ( long ) clienteRequest.getIndirizzoLegaleId() ) )
+                    .indirizzoLegale( clienteRequest.getIndirizzoLegaleId() == 0 ?
+                            indirizzoService.getById( clienteFind.get().getClienteId() ) :
+                            indirizzoService.getById( ( long ) clienteRequest.getIndirizzoLegaleId() ) )
                     .indirizzoOperativo( clienteRequest.getIndirizzoOperativoId() == 0 ?
-                            clienteFind.get().getIndirizzoOperativo() : indirizzoOperativoService.getById( ( long ) clienteRequest.getIndirizzoOperativoId() ) )
+                            clienteFind.get().getIndirizzoOperativo() : indirizzoService.getById( ( long ) clienteRequest.getIndirizzoOperativoId() ) )
                     .email( clienteRequest.getEmail() == null ? clienteFind.get().getEmail() : clienteRequest.getEmail() )
                     .pec( clienteRequest.getPec() == null ? clienteFind.get().getPec() : clienteRequest.getPec() )
                     .emailContatto( clienteRequest.getEmailContatto() == null ? clienteFind.get().getEmailContatto() : clienteRequest.getEmailContatto() )
@@ -67,15 +67,14 @@ public class ClienteService {
 
     }
 
-    ;
 
     public Cliente createAndSave( ClienteRequest clienteRequest ) throws Exception {
 
         Cliente cliente = Cliente.builder()
                 .partitaIva( clienteRequest.getPartitaIva() )
                 .user( userService.getById( ( long ) clienteRequest.getUserId() ) )
-                .indirizzoLegale( indirizzoLegaleService.getById( ( long ) clienteRequest.getIndirizzoLegaleId() ) )
-                .indirizzoOperativo( indirizzoOperativoService.getById( ( long ) clienteRequest.getIndirizzoOperativoId() ) )
+                .indirizzoLegale( indirizzoService.getById( ( long ) clienteRequest.getIndirizzoLegaleId() ) )
+                .indirizzoOperativo( indirizzoService.getById( ( long ) clienteRequest.getIndirizzoOperativoId() ) )
                 .email( clienteRequest.getEmail() )
                 .pec( clienteRequest.getPec() )
                 .emailContatto( clienteRequest.getEmailContatto() )

@@ -34,7 +34,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     )
     Page<Cliente> findByDataUltimoContatto( Pageable pageable );
 
-    @Query("select c from Cliente c order by c.indirizzoLegale.comune.nomeProvincia asc"
+    @Query("select c from Cliente c order by c.indirizzoLegale.comune.provincia.sigla asc"
     )
     Page<Cliente> findByNomeProvincia( Pageable pageable );
 

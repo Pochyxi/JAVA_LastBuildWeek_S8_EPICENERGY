@@ -27,4 +27,8 @@ public class Provincia {
 
     private String regione;
 
+    @OneToMany(mappedBy = "provincia", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private List<Comune> comuni;
+
 }

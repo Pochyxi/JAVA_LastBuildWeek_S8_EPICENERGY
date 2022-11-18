@@ -23,7 +23,7 @@ public class ComuneController {
 
     @PostMapping("/add-comune")
     @PreAuthorize("hasRole('ADMIN')")
-    public String addComune() throws IOException {
+    public String addComune() throws Exception {
         return comuneService.addComuni();
     }
 

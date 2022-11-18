@@ -1,9 +1,10 @@
 package com.example.lastbuildweek.controllers;
 
-import com.example.lastbuildweek.entities.IndirizzoLegale;
-import com.example.lastbuildweek.repositories.IndirizzoLegaleRepository;
+import com.example.lastbuildweek.entities.Indirizzo;
+import com.example.lastbuildweek.repositories.IndirizzoRepository;
 import com.example.lastbuildweek.services.ComuneService;
-import com.example.lastbuildweek.services.IndirizzoLegaleService;
+import com.example.lastbuildweek.services.IndirizzoService;
+import com.example.lastbuildweek.utils.IndirizzoRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,26 +16,26 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/indirizzo-legale")
+@RequestMapping("/api/indirizzi")
 @Slf4j
 @CrossOrigin(origins = "*")
-public class IndirizzoLegaleController {
+public class IndirizzoController {
 
     @Autowired
-    private IndirizzoLegaleService indirizzoLegaleService;
+    private IndirizzoService indirizzoService;
 
     @Autowired
     private ComuneService comuneService;
 
     @Autowired
-    private IndirizzoLegaleRepository indirizzoLegaleRepository;
+    private IndirizzoRepository indirizzoRepository;
 
     @GetMapping("")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<IndirizzoLegale>> get() throws Exception {
+    public ResponseEntity<List<Indirizzo>> get() throws Exception {
 
         return new ResponseEntity<>(
-                indirizzoLegaleRepository.findAll( ),
+                indirizzoRepository.findAll(),
                 HttpStatus.OK
         );
     }
@@ -42,10 +43,10 @@ public class IndirizzoLegaleController {
     // RITORNA UN SINGOLO INDIRIZZO-LEGALE PER ID(PK)
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<IndirizzoLegale> get(@PathVariable("id") Long id ) throws Exception {
+    public ResponseEntity<Indirizzo> get( @PathVariable("id") Long id ) throws Exception {
 
         return new ResponseEntity<>(
-                indirizzoLegaleService.getById( id ),
+                indirizzoService.getById( id ),
                 HttpStatus.OK
         );
     }
@@ -54,25 +55,13 @@ public class IndirizzoLegaleController {
     // AGGIUNGI UN NUOVO INDIRIZZO-LEGALE CON IL BODY COME RICHIESTA
     @PostMapping("/new-raw")
     @PreAuthorize("hasRole('ADMIN')")
-    public IndirizzoLegale create(
-            @RequestParam("via") String via,
-            @RequestParam("civico") Integer civico,
-            @RequestParam("cap") Integer cap,
-            @RequestParam("nomeComune") String nomeComune
-    ) {
+    public Indirizzo create( @RequestBody IndirizzoRequest indirizzoRequest ) {
 
         try {
 
-            IndirizzoLegale indirizzoLegale = IndirizzoLegale.builder()
-                    .via(via)
-                    .civico(civico)
-                    .cap(cap)
-                    .comune(comuneService.getByNome(nomeComune))
-                    .build();
 
-            indirizzoLegaleService.save( indirizzoLegale );
+            return indirizzoService.createAndSave( indirizzoRequest );
 
-            return indirizzoLegale;
 
         } catch( Exception e ) {
 
@@ -85,22 +74,23 @@ public class IndirizzoLegaleController {
     }
 
 
-
-
     //AGGIORNA LE PROPRIETA' DI UN INDIRIZZO-LEGALE
     @PutMapping("")
     @PreAuthorize("hasRole('ADMIN')")
-    public void update( @RequestBody IndirizzoLegale indirizzoLegale ) {
+    public Indirizzo update( @RequestBody IndirizzoRequest indirizzoRequest ) {
 
         try {
 
-            indirizzoLegaleService.save( indirizzoLegale );
+            return indirizzoService.createAndUpdate( indirizzoRequest );
 
         } catch( Exception e ) {
 
             log.error( e.getMessage() );
 
         }
+        return Indirizzo.builder()
+                .via( "Error on update indirizzo" )
+                .build();
     }
 
 
@@ -110,7 +100,7 @@ public class IndirizzoLegaleController {
 
         try {
 
-            indirizzoLegaleService.delete( id);
+            indirizzoService.delete( id );
 
         } catch( Exception e ) {
 
