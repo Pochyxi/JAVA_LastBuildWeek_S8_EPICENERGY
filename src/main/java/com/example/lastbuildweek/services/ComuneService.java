@@ -20,7 +20,10 @@ public class ComuneService {
     @Autowired
     ComuneRepository comuneRepository;
 
-    public String addComuni() throws IOException {
+    @Autowired
+    ProvinciaService provinciaService;
+
+    public String addComuni() throws Exception {
 
         CSVReader reader = new CSVReader();
 
@@ -33,14 +36,18 @@ public class ComuneService {
                 String provincia = line[ 3 ];
                 String nomeComune = line[ 2 ];
 
+                try {
+                    Comune newComune = Comune.builder()
+                            .nome(nomeComune)
+                            .provincia( provinciaService.getByNome( provincia ) )
+                            .build();
 
-                Comune newComune = Comune.builder()
-                        .nome(nomeComune)
-                        .nomeProvincia( provincia )
-                        .build();
+                    // Salvo l'entita nel database
+                    comuneRepository.save(newComune);
+                } catch( Exception e ) {
+                    System.out.println("Error");
+                }
 
-                // Salvo l'entita nel database
-                comuneRepository.save(newComune);
             } else {
                 count++;
             }

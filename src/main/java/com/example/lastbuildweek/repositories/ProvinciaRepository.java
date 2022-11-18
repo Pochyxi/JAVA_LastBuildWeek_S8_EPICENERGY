@@ -19,6 +19,11 @@ public interface ProvinciaRepository extends JpaRepository<Provincia, Long> {
     )
     Optional<Provincia> findBySigla( @PathVariable("sigla") String sigla );
 
+    @Query(
+            value = "select p from Provincia p where p.nome = :nome"
+    )
+    Optional<Provincia> findByNome( @PathVariable("nome") String nome );
+
 
     @Query("select p from Provincia p where upper(p.nome) like upper(concat('%', :nome, '%'))")
     List<Provincia> findByNomeContainingIgnoreCase( @Param ( "nome" ) String nome );

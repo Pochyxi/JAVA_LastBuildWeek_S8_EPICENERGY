@@ -27,14 +27,8 @@ public class ProvinciaController {
 
     @GetMapping("/nome/{provincia}")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Provincia> getByNome( @PathVariable("provincia") String provincia) throws IOException {
+    public List<Provincia> getByNome( @PathVariable("provincia") String provincia) {
         return provinciaRepository.findByNomeContainingIgnoreCase(provincia);
-    }
-
-    @PostMapping("/add-provincia")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String addProvincie() throws IOException {
-        return provinciaService.addProvincia();
     }
 
     // RITORNA UNA SINGOLA PROVINCIA PER ID(PK)

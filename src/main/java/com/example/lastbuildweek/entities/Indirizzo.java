@@ -1,6 +1,5 @@
 package com.example.lastbuildweek.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,12 +11,12 @@ import javax.persistence.*;
 @Setter
 @ToString
 @Entity
-public class IndirizzoLegale {
+public class Indirizzo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "indirizzoLegale", nullable = false)
-    private Long indirizzoLegaleId;
+    @Column(name = "indirizzo", nullable = false)
+    private Long indirizzoId;
 
     private String via;
     private int civico;
@@ -26,7 +25,6 @@ public class IndirizzoLegale {
     @ManyToOne
     @JoinColumn(name = "comune")
     private Comune comune;
-
 
 
 }

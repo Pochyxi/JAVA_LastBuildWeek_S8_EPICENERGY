@@ -28,11 +28,11 @@ public class Cliente {
 
     @ManyToOne(cascade = { CascadeType.ALL })
     @JoinColumn(name = "indirizzo_legale_id")
-    private IndirizzoLegale indirizzoLegale;
+    private Indirizzo indirizzoLegale;
 
     @ManyToOne(cascade = { CascadeType.ALL })
     @JoinColumn(name = "indirizzo_operativo_id")
-    private IndirizzoOperativo indirizzoOperativo;
+    private Indirizzo indirizzoOperativo;
 
     private String email;
     private String pec;
@@ -48,6 +48,8 @@ public class Cliente {
     @Enumerated(EnumType.STRING)
     private RagioneSociale ragioneSociale;
 
+    @ToString.Exclude
+    @Builder.Default
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Fattura> fatture = new java.util.ArrayList<>();
