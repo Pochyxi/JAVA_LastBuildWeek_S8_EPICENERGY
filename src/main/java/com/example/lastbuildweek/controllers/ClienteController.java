@@ -2,7 +2,7 @@ package com.example.lastbuildweek.controllers;
 
 import com.example.lastbuildweek.entities.*;
 import com.example.lastbuildweek.services.*;
-import com.example.lastbuildweek.utils.ClienteConverter;
+import com.example.lastbuildweek.utils.ClienteRequest;
 import com.example.lastbuildweek.utils.ConverDate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,11 +143,11 @@ public class ClienteController {
     // AGGIUNGI UN NUOVO CLIENTE CON IL BODY COME RICHIESTA
     @PostMapping("/new-raw")
     @PreAuthorize("hasRole('ADMIN')")
-    public Cliente create( @RequestBody ClienteConverter clienteConverter ) {
+    public Cliente create( @RequestBody ClienteRequest clienteRequest ) {
 
         try {
 
-            return clienteService.createAndSave( clienteConverter );
+            return clienteService.createAndSave( clienteRequest );
 
         } catch( Exception e ) {
 
@@ -162,11 +162,11 @@ public class ClienteController {
     //AGGIORNA LE PROPRIETA' DI UN CLIENTE
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Cliente update( @RequestBody ClienteConverter clienteConverter, @PathVariable("id") int id  ) {
+    public Cliente update( @RequestBody ClienteRequest clienteRequest, @PathVariable("id") int id  ) {
 
         try {
 
-            return clienteService.createAndUpdate( clienteConverter, id );
+            return clienteService.createAndUpdate( clienteRequest, id );
 
         } catch( Exception e ) {
 

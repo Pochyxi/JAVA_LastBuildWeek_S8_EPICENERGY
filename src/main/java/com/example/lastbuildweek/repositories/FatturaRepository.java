@@ -1,6 +1,7 @@
 package com.example.lastbuildweek.repositories;
 
 import com.example.lastbuildweek.entities.Fattura;
+import com.example.lastbuildweek.entities.StatoFattura;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,7 +19,8 @@ public interface FatturaRepository extends JpaRepository<Fattura, Long> {
     Page<Fattura> findFatturaByClienteId( @Param("id") Long id, Pageable pageable );
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER STATO
-
+    @Query("select f from Fattura f where f.statoFattura = :stato")
+    Page<Fattura> findFatturaByStatoFattura( @Param( "stato" ) StatoFattura stato, Pageable pageable );
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER DATA(LOCALDATE)
     @Query(
@@ -38,4 +40,6 @@ public interface FatturaRepository extends JpaRepository<Fattura, Long> {
     )
     Page<Fattura> findFatturaByRange( @Param("importoIniziale") int importoIniziale,
                                      @Param("importoFinale") int importoFinale, Pageable pageable );
+
+
 }

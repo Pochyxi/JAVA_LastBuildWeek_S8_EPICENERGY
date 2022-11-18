@@ -1,6 +1,7 @@
 package com.example.lastbuildweek.controllers;
 
 import com.example.lastbuildweek.entities.Fattura;
+import com.example.lastbuildweek.entities.StatoFattura;
 import com.example.lastbuildweek.services.ClienteService;
 import com.example.lastbuildweek.services.FatturaService;
 import com.example.lastbuildweek.utils.ConverDate;
@@ -52,11 +53,20 @@ public class FatturaController {
     }
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER STATO
+    @GetMapping("/stato/{stato}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<Fattura>> getFatturaByStatoFattura( @PathVariable("stato") String stato, Pageable p ) throws Exception {
+
+        return new ResponseEntity<>(
+                fatturaService.filterFatturaByStatoFattura( stato, p ),
+                HttpStatus.OK
+        );
+    }
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER DATA(LOCALDATE)
     @GetMapping("/data/{data}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<Fattura>> get( @PathVariable("data") String data, Pageable p ) throws Exception {
+    public ResponseEntity<Page<Fattura>> getFatturaByDataLocal( @PathVariable("data") String data, Pageable p ) throws Exception {
 
         return new ResponseEntity<>(
                 fatturaService.filterFatturaByDataLocal( ConverDate.convertDate( data ), p ),
@@ -67,7 +77,7 @@ public class FatturaController {
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER ANNO
     @GetMapping("/anno/{anno}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<Fattura>> get( @PathVariable("anno") int anno, Pageable p ) throws Exception {
+    public ResponseEntity<Page<Fattura>> getFatturaByAnno( @PathVariable("anno") int anno, Pageable p ) throws Exception {
 
         return new ResponseEntity<>(
                 fatturaService.filterFatturaByAnno( anno, p ),
@@ -78,7 +88,7 @@ public class FatturaController {
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER RANGE DI IMPORTI
     @GetMapping("/range/inizio/{inizio}/fine/{fine}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<Fattura>> get( @PathVariable("inizio") int inizio,
+    public ResponseEntity<Page<Fattura>> getFatturaByRange( @PathVariable("inizio") int inizio,
                                               @PathVariable("fine") int fine, Pageable p ) throws Exception {
 
         return new ResponseEntity<>(
@@ -98,6 +108,7 @@ public class FatturaController {
             Fattura fattura = Fattura.builder()
                     .anno(fatturaRequest.getAnno())
                     .importo(fatturaRequest.getImporto())
+                    .statoFattura( StatoFattura.valueOf( fatturaRequest.getStatoFattura() ) )
                     .cliente(clienteService.getById(fatturaRequest.getClienteId()))
                     .data(LocalDate.now())
                     .build();

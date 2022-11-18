@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class ClienteConverter {
+public class ClienteRequest {
 
     private int partitaIva;
     private int userId;
