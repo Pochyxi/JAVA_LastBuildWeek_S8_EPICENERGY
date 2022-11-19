@@ -1,11 +1,9 @@
 package com.example.lastbuildweek.services;
 
-import com.example.lastbuildweek.entities.Cliente;
 import com.example.lastbuildweek.entities.Comune;
 import com.example.lastbuildweek.entities.Indirizzo;
 import com.example.lastbuildweek.repositories.IndirizzoRepository;
-import com.example.lastbuildweek.utils.IndirizzoRequest;
-import com.example.lastbuildweek.utils.RagioneSocialeParser;
+import com.example.lastbuildweek.utils.RequestModels.IndirizzoRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

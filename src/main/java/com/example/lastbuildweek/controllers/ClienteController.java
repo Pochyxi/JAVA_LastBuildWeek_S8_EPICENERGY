@@ -2,7 +2,8 @@ package com.example.lastbuildweek.controllers;
 
 import com.example.lastbuildweek.entities.*;
 import com.example.lastbuildweek.services.*;
-import com.example.lastbuildweek.utils.ClienteRequest;
+import com.example.lastbuildweek.utils.RequestModels.ClienteRequest;
+import com.example.lastbuildweek.utils.ResponseModels.ClienteResponse;
 import com.example.lastbuildweek.utils.ConverDate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,11 +144,11 @@ public class ClienteController {
     // AGGIUNGI UN NUOVO CLIENTE CON IL BODY COME RICHIESTA
     @PostMapping("/new-raw")
     @PreAuthorize("hasRole('ADMIN')")
-    public Cliente create( @RequestBody ClienteRequest clienteRequest ) {
+    public ClienteResponse create( @RequestBody ClienteRequest clienteRequest ) {
 
         try {
 
-            return clienteService.createAndSave( clienteRequest );
+             return clienteService.createAndSave( clienteRequest );
 
         } catch( Exception e ) {
 

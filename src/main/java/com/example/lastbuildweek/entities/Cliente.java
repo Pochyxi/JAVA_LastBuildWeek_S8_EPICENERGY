@@ -1,6 +1,8 @@
 package com.example.lastbuildweek.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,7 +25,10 @@ public class Cliente {
 
     private int partitaIva;
 
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "users_id")
+    @JsonManagedReference
     private User user;
 
     @ManyToOne(cascade = { CascadeType.ALL })
@@ -49,10 +54,9 @@ public class Cliente {
     private RagioneSociale ragioneSociale;
 
     @ToString.Exclude
-    @Builder.Default
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<Fattura> fatture = new java.util.ArrayList<>();
+    private List<Fattura> fatture;
 
     public void addDataInserimento() {
         this.dataInserimento = LocalDate.now();

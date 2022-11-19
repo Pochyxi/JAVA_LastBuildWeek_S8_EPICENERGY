@@ -1,5 +1,6 @@
-package com.example.lastbuildweek.utils;
+package com.example.lastbuildweek.utils.RequestModels;
 
+import com.example.lastbuildweek.entities.Cliente;
 import lombok.*;
 
 @Builder

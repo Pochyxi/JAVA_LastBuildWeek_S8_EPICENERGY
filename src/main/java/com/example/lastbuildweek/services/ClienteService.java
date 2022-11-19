@@ -2,7 +2,8 @@ package com.example.lastbuildweek.services;
 
 import com.example.lastbuildweek.entities.Cliente;
 import com.example.lastbuildweek.repositories.ClienteRepository;
-import com.example.lastbuildweek.utils.ClienteRequest;
+import com.example.lastbuildweek.utils.RequestModels.ClienteRequest;
+import com.example.lastbuildweek.utils.ResponseModels.ClienteResponse;
 import com.example.lastbuildweek.utils.RagioneSocialeParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,7 +42,8 @@ public class ClienteService {
             Cliente cliente = Cliente.builder()
                     .clienteId( clienteFind.get().getClienteId() )
                     .partitaIva( clienteRequest.getPartitaIva() == 0 ? clienteFind.get().getPartitaIva() : clienteRequest.getPartitaIva() )
-                    .user( clienteRequest.getUserId() == 0 ? clienteFind.get().getUser() : userService.getById( ( long ) clienteRequest.getUserId() ) )
+                    .user( clienteRequest.getUserId() == 0 ? clienteFind.get().getUser() :
+                            userService.getById( ( long ) clienteRequest.getUserId() ) )
                     .indirizzoLegale( clienteRequest.getIndirizzoLegaleId() == 0 ?
                             indirizzoService.getById( clienteFind.get().getClienteId() ) :
                             indirizzoService.getById( ( long ) clienteRequest.getIndirizzoLegaleId() ) )
@@ -68,7 +70,7 @@ public class ClienteService {
     }
 
 
-    public Cliente createAndSave( ClienteRequest clienteRequest ) throws Exception {
+    public ClienteResponse createAndSave( ClienteRequest clienteRequest ) throws Exception {
 
         Cliente cliente = Cliente.builder()
                 .partitaIva( clienteRequest.getPartitaIva() )
@@ -87,7 +89,8 @@ public class ClienteService {
                 .dataUltimoContatto( LocalDate.now() )
                 .build();
 
-        return clienteRepository.save( cliente );
+         clienteRepository.save( cliente );
+         return ClienteResponse.parseCliente( cliente );
     }
 
     ;

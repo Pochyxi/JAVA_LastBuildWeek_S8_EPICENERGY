@@ -27,29 +27,56 @@ public class ComuneService {
 
         CSVReader reader = new CSVReader();
 
-        int count = 0;
+        int count1 = 0;
 
-        for( String prov : reader.listComuni() ) {
-            if(count != 0) {
-
+        for( String prov : reader.listProvince() ) {
+            if( count1 != 0 ) {
+                // prov sarà un elemento dell'array (esempio: String prov = "Agrigento;AG;Sicilia")
+                // splittando ulteriormente la stringa possiamo ottenere ["Agrigento", "AG", "Sicilia"]
                 String[] line = prov.split( ";" );
+                String sigla = line[ 0 ]; // "Agrigento"
+                String provincia = line[ 1 ]; // "AG"
+                String regione = line[ 2 ]; // "Sicilia"
+
+                //Con i dati ottenuti creo la mia entità di tipo Provincia
+                Provincia newProv = Provincia.builder()
+                        .sigla( sigla )
+                        .nome( provincia )
+                        .regione( regione )
+                        .build();
+
+                // Salvo l'entita nel database
+                provinciaService.save( newProv );
+
+            } else {
+                count1++;
+            }
+        }
+
+        int count2 = 0;
+
+        for( String com : reader.listComuni() ) {
+            if( count2 != 0 ) {
+
+                String[] line = com.split( ";" );
                 String provincia = line[ 3 ];
                 String nomeComune = line[ 2 ];
 
                 try {
                     Comune newComune = Comune.builder()
-                            .nome(nomeComune)
+                            .nome( nomeComune )
                             .provincia( provinciaService.getByNome( provincia ) )
                             .build();
 
                     // Salvo l'entita nel database
-                    comuneRepository.save(newComune);
+                    comuneRepository.save( newComune );
+
                 } catch( Exception e ) {
-                    System.out.println("Error");
+                    System.out.println( "Error" );
                 }
 
             } else {
-                count++;
+                count2++;
             }
 
         }
