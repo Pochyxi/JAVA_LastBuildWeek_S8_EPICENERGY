@@ -1,4 +1,4 @@
-package com.example.lastbuildweek.utils;
+package com.example.lastbuildweek.utils.RequestModels;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

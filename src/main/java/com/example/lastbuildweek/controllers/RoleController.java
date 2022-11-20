@@ -55,27 +55,6 @@ public class RoleController {
 
 	}
 
-	// SETTA DI DEFAULT I DUE RUOLI DISPONIBILI
-	@PostMapping("/new")
-//	@PreAuthorize( "hasRole('ADMIN')" )
-	public List<Role> create() {
-
-		Role roleUser = new Role();
-		Role roleAdmin = new Role();
-		roleUser.setRoleType( RoleType.ROLE_USER );
-		roleAdmin.setRoleType( RoleType.ROLE_ADMIN );
-
-		rs.save(roleUser);
-		rs.save(roleAdmin);
-
-		List<Role> roles = new ArrayList<>();
-		roles.add(roleUser);
-        roles.add(roleAdmin);
-
-		return roles;
-
-	}
-
 	// MODIFICA I RUOLI
 	@PutMapping("")
 	@PreAuthorize( "hasRole('ADMIN')" )

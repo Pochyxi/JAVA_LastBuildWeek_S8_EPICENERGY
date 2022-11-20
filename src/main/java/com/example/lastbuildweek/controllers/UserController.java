@@ -1,11 +1,12 @@
 package com.example.lastbuildweek.controllers;
 
 
-import com.example.lastbuildweek.entities.Role;
 import com.example.lastbuildweek.entities.RoleType;
 import com.example.lastbuildweek.entities.User;
 import com.example.lastbuildweek.services.RoleService;
 import com.example.lastbuildweek.services.UserService;
+import com.example.lastbuildweek.utils.RequestModels.UserRequest;
+import com.example.lastbuildweek.utils.ResponseModels.UserResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,9 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Slf4j
@@ -73,7 +72,8 @@ public class UserController {
     public ResponseEntity<User> getByUsername( @PathVariable String username ) throws Exception {
 
         return new ResponseEntity<>(
-                userService.findByUsername( username ),
+                userService.findByUsername( username ).isPresent() ?
+                        userService.findByUsername( username ).get() : null,
                 HttpStatus.OK
         );
 
@@ -82,16 +82,12 @@ public class UserController {
     // AGGIUNGI UN NUOVO UTENTE CON IL BODY COME RICHIESTA
     @PostMapping("/new-raw")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public User create( @RequestBody User user ) {
+    public UserResponse create( @RequestBody UserRequest user ) {
 
         try {
-            Set<Role> roles = new HashSet<>();
-            roles.add( roleService.getById( 1L ) );
-            user.setRoles( roles );
 
-            userService.save( user );
+            return userService.createAndSave( user );
 
-            return user;
 
         } catch( Exception e ) {
 
@@ -103,82 +99,23 @@ public class UserController {
 
     }
 
-    // CREAZIONE ACCOUNT ADMIN
-    @PostMapping("/new-raw-admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public User createBasicAdmin( @RequestBody User user ) {
-
-        try {
-            Set<Role> roles = new HashSet<>();
-            roles.add( roleService.getById( 1L ) );
-            roles.add( roleService.getById( 2L ) );
-            user.setRoles( roles );
-
-            userService.save( user );
-
-            return user;
-
-        } catch( Exception e ) {
-
-            log.error( e.getMessage() );
-
-        }
-
-        return null;
-
-    }
-
-    //AGGIUNGI UN NUOVO UTENTE CON LE PATHVARIABLE(POCO SICURO A MIO AVVISO)
-//    @PostMapping("/new-path/{nomeCompleto}/{username}/{password}/{email}")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public User create(
-//            @PathVariable("nomeCompleto") String nomeCompleto,
-//            @PathVariable("username") String username,
-//            @PathVariable("password") String password,
-//            @PathVariable("email") String email
-//    ) {
-//
-//        try {
-//
-//            User user = new User();
-//            user.setNomeCompleto( nomeCompleto );
-//            user.setUsername( username );
-//            user.setPassword( password );
-//            user.setEmail( email );
-//            user.setActive( true );
-//
-//            Set<Role> rolesUser = new HashSet<>();
-//            rolesUser.add( roleService.getById( 1L ) );
-//            user.setRoles( rolesUser );
-//
-//            userService.save( user );
-//
-//            return user;
-//
-//        } catch( Exception e ) {
-//
-//            log.error( e.getMessage() );
-//
-//        }
-//
-//        return null;
-//
-//    }
 
     //AGGIORNA LE PROPRIETA' DI UN UTENTE
-    @PutMapping("")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void update( @RequestBody User user ) {
+    public ResponseEntity<UserResponse> update( @RequestBody UserRequest user, @PathVariable("id") Long id ) {
 
         try {
+            return new ResponseEntity<>( userService.updateResponse( user, id ),
+                    HttpStatus.OK);
 
-            userService.save( user );
 
         } catch( Exception e ) {
 
             log.error( e.getMessage() );
 
         }
+        return new ResponseEntity<>( HttpStatus.NOT_FOUND);
     }
 
     // AGGIUNGI UN NUOVO RUOLO ALL'UTENTE

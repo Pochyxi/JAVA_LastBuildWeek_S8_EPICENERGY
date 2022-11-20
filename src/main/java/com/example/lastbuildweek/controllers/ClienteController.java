@@ -2,7 +2,8 @@ package com.example.lastbuildweek.controllers;
 
 import com.example.lastbuildweek.entities.*;
 import com.example.lastbuildweek.services.*;
-import com.example.lastbuildweek.utils.ClienteRequest;
+import com.example.lastbuildweek.utils.RequestModels.ClienteRequest;
+import com.example.lastbuildweek.utils.ResponseModels.ClienteResponse;
 import com.example.lastbuildweek.utils.ConverDate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
+    //GET ALL
     @GetMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     @CrossOrigin
@@ -32,7 +34,7 @@ public class ClienteController {
 
     }
 
-    // RITORNA UN SINGOLO CLIENTE PER ID(PK)
+    // GET
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Cliente> getById( @PathVariable Long id ) throws Exception {
@@ -43,8 +45,64 @@ public class ClienteController {
         );
     }
 
-    //RITORNA UNA PAGINAZIONE DI TUTTI I CLIENTI ORDINATI PER NOME
+    // CREATE
+    @PostMapping("/new-raw")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ClienteResponse create( @RequestBody ClienteRequest clienteRequest ) {
 
+        try {
+
+             return clienteService.createAndSave( clienteRequest );
+
+        } catch( Exception e ) {
+
+            log.error( e.getMessage() );
+
+        }
+
+        return null;
+
+    }
+
+    //UPDATE
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ClienteResponse> update( @RequestBody ClienteRequest clienteRequest, @PathVariable("id") Long id  ) {
+
+        try {
+
+            return new ResponseEntity<>( clienteService.updateResponse( clienteRequest, id ), HttpStatus.OK );
+
+        } catch( Exception e ) {
+
+            log.error( e.getMessage() );
+
+        }
+        return new ResponseEntity<>( HttpStatus.BAD_REQUEST );
+    }
+
+
+    //DELETE
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteById( @PathVariable Long id ) {
+
+        try {
+
+            clienteService.delete( id );
+
+        } catch( Exception e ) {
+
+            log.error( e.getMessage() );
+
+        }
+
+    }
+
+    ///////////////////////// QUERY PERSONALIZZATE
+    /////////////////////////
+
+    // RITORNA UNA PAGINAZIONE DI TUTTI I CLIENTI ORDINATI PER NOME
     @GetMapping("/nome/")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<Cliente>> getByNomeContatto( Pageable p ) {
@@ -138,58 +196,5 @@ public class ClienteController {
                 clienteService.filterByNomeECognome( nome, cognome, p ),
                 HttpStatus.OK
         );
-    }
-
-    // AGGIUNGI UN NUOVO CLIENTE CON IL BODY COME RICHIESTA
-    @PostMapping("/new-raw")
-    @PreAuthorize("hasRole('ADMIN')")
-    public Cliente create( @RequestBody ClienteRequest clienteRequest ) {
-
-        try {
-
-            return clienteService.createAndSave( clienteRequest );
-
-        } catch( Exception e ) {
-
-            log.error( e.getMessage() );
-
-        }
-
-        return null;
-
-    }
-
-    //AGGIORNA LE PROPRIETA' DI UN CLIENTE
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public Cliente update( @RequestBody ClienteRequest clienteRequest, @PathVariable("id") int id  ) {
-
-        try {
-
-            return clienteService.createAndUpdate( clienteRequest, id );
-
-        } catch( Exception e ) {
-
-            log.error( e.getMessage() );
-
-        }
-        return null;
-    }
-
-
-    @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public void deleteById( @PathVariable Long id ) {
-
-        try {
-
-            clienteService.delete( id );
-
-        } catch( Exception e ) {
-
-            log.error( e.getMessage() );
-
-        }
-
     }
 }

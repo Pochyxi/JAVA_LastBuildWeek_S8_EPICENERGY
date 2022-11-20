@@ -5,7 +5,7 @@ import com.example.lastbuildweek.entities.StatoFattura;
 import com.example.lastbuildweek.services.ClienteService;
 import com.example.lastbuildweek.services.FatturaService;
 import com.example.lastbuildweek.utils.ConverDate;
-import com.example.lastbuildweek.utils.FatturaRequest;
+import com.example.lastbuildweek.utils.RequestModels.FatturaRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

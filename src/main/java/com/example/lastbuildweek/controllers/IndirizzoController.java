@@ -4,7 +4,7 @@ import com.example.lastbuildweek.entities.Indirizzo;
 import com.example.lastbuildweek.repositories.IndirizzoRepository;
 import com.example.lastbuildweek.services.ComuneService;
 import com.example.lastbuildweek.services.IndirizzoService;
-import com.example.lastbuildweek.utils.IndirizzoRequest;
+import com.example.lastbuildweek.utils.RequestModels.IndirizzoRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
