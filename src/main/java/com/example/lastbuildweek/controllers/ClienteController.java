@@ -163,18 +163,18 @@ public class ClienteController {
     //AGGIORNA LE PROPRIETA' DI UN CLIENTE
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Cliente update( @RequestBody ClienteRequest clienteRequest, @PathVariable("id") int id  ) {
+    public ResponseEntity<ClienteResponse> update( @RequestBody ClienteRequest clienteRequest, @PathVariable("id") Long id  ) {
 
         try {
 
-            return clienteService.createAndUpdate( clienteRequest, id );
+            return new ResponseEntity<>( clienteService.updateResponse( clienteRequest, id ), HttpStatus.OK );
 
         } catch( Exception e ) {
 
             log.error( e.getMessage() );
 
         }
-        return null;
+        return new ResponseEntity<>( HttpStatus.BAD_REQUEST );
     }
 
 

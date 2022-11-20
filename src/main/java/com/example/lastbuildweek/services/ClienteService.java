@@ -1,10 +1,13 @@
 package com.example.lastbuildweek.services;
 
 import com.example.lastbuildweek.entities.Cliente;
+import com.example.lastbuildweek.entities.RagioneSociale;
+import com.example.lastbuildweek.entities.User;
 import com.example.lastbuildweek.repositories.ClienteRepository;
 import com.example.lastbuildweek.utils.RequestModels.ClienteRequest;
 import com.example.lastbuildweek.utils.ResponseModels.ClienteResponse;
 import com.example.lastbuildweek.utils.RagioneSocialeParser;
+import com.example.lastbuildweek.utils.ResponseModels.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -114,6 +117,44 @@ public class ClienteService {
 
     public void update( Cliente cliente ) {
         clienteRepository.save( cliente );
+    }
+
+    public ClienteResponse updateResponse( ClienteRequest clienteRequest, Long id) throws Exception {
+        Optional<Cliente> clienteFind = clienteRepository.findById( id );
+
+        if( clienteFind.isPresent() ) {
+            Cliente c = new Cliente();
+            c.setClienteId( id );
+            c.setUser( clienteFind.get().getUser() );
+            c.setPartitaIva( clienteRequest.getPartitaIva() == 0 ? clienteFind.get().getPartitaIva() :
+                    clienteRequest.getPartitaIva() );
+            c.setIndirizzoLegale( clienteRequest.getIndirizzoLegaleId() == 0 ?
+                    clienteFind.get().getIndirizzoLegale() : indirizzoService.getById( ( long ) clienteRequest.getIndirizzoLegaleId() ) );
+            c.setIndirizzoOperativo( clienteRequest.getIndirizzoOperativoId() == 0 ?
+                    clienteFind.get().getIndirizzoOperativo() : indirizzoService.getById( ( long ) clienteRequest.getIndirizzoOperativoId() ) );
+            c.setEmail( clienteRequest.getEmail() == null ? clienteFind.get().getEmail() : clienteRequest.getEmail() );
+            c.setPec( clienteRequest.getPec() == null ? clienteFind.get().getPec() : clienteRequest.getPec() );
+            c.setEmailContatto( clienteRequest.getEmailContatto() == null ? clienteFind.get().getEmailContatto() :
+                    clienteRequest.getEmailContatto() );
+            c.setNomeContatto( clienteRequest.getNomeContatto() == null ? clienteFind.get().getNomeContatto() :
+                    clienteRequest.getNomeContatto() );
+            c.setCognomeContatto( clienteRequest.getCognomeContatto() == null ?
+                    clienteFind.get().getCognomeContatto() : clienteRequest.getCognomeContatto() );
+            c.setTelefonoContatto( clienteRequest.getTelefonoContatto() == null ?
+                    clienteFind.get().getTelefonoContatto() : clienteRequest.getTelefonoContatto() );
+            c.setFatturatoAnnuo( clienteRequest.getFatturatoAnnuo() == 0 ? clienteFind.get().getFatturatoAnnuo() :
+                    clienteRequest.getFatturatoAnnuo() );
+            c.setFatture( clienteFind.get().getFatture() );
+            c.setRagioneSociale( clienteRequest.getRagioneSociale() == null ? clienteFind.get().getRagioneSociale() :
+                    RagioneSociale.valueOf( clienteRequest.getRagioneSociale() ) );
+            c.setDataInserimento( clienteFind.get().getDataInserimento() );
+            c.setDataUltimoContatto( clienteFind.get().getDataUltimoContatto() );
+
+            clienteRepository.save( c );
+            return ClienteResponse.parseCliente( clienteFind.get() );
+        } else {
+            return null;
+        }
     }
 
     public Page<Cliente> getAllPaginate( Pageable p ) {

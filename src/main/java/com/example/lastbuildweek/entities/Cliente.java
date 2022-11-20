@@ -31,11 +31,11 @@ public class Cliente {
     @JsonManagedReference
     private User user;
 
-    @ManyToOne(cascade = { CascadeType.ALL })
+    @ManyToOne
     @JoinColumn(name = "indirizzo_legale_id")
     private Indirizzo indirizzoLegale;
 
-    @ManyToOne(cascade = { CascadeType.ALL })
+    @ManyToOne
     @JoinColumn(name = "indirizzo_operativo_id")
     private Indirizzo indirizzoOperativo;
 

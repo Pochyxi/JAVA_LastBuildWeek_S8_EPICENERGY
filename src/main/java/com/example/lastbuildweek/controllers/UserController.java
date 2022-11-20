@@ -101,19 +101,21 @@ public class UserController {
 
 
     //AGGIORNA LE PROPRIETA' DI UN UTENTE
-    @PutMapping("")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void update( @RequestBody User user ) {
+    public ResponseEntity<UserResponse> update( @RequestBody UserRequest user, @PathVariable("id") Long id ) {
 
         try {
+            return new ResponseEntity<>( userService.updateResponse( user, id ),
+                    HttpStatus.OK);
 
-            userService.save( user );
 
         } catch( Exception e ) {
 
             log.error( e.getMessage() );
 
         }
+        return new ResponseEntity<>( HttpStatus.NOT_FOUND);
     }
 
     // AGGIUNGI UN NUOVO RUOLO ALL'UTENTE

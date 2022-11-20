@@ -39,7 +39,7 @@ public class UserService {
         u.setNomeCompleto( userRequest.getNomeCompleto() );
         u.setEmail( userRequest.getEmail() );
         u.setUsername( userRequest.getUsername() );
-        u.setPassword( userRequest.getPassword() );
+        u.setPassword( encoder.encode( userRequest.getPassword() ) );
 
         Set<Role> roles = new HashSet<>();
         roles.add( roleService.getById( 1L ) );
@@ -49,36 +49,60 @@ public class UserService {
         return UserResponse.parseUser( u );
     }
 
-        public List<User> getAll () {
-            return userRepository.findAll();
-        }
+    public List<User> getAll() {
+        return userRepository.findAll();
+    }
 
-        public User getById (Long id) throws Exception {
-            Optional<User> user = userRepository.findById( id );
-            if( user.isEmpty() )
-                throw new Exception( "User not available" );
-            return user.get();
-        }
+    public User getById( Long id ) throws Exception {
+        Optional<User> user = userRepository.findById( id );
+        if( user.isEmpty() )
+            throw new Exception( "User not available" );
+        return user.get();
+    }
 
-        public void delete (Long id) throws Exception {
-            Optional<User> u = userRepository.findById( id );
-            if( u.isPresent() ) {
-                userRepository.delete( u.get() );
-            } else {
-                throw new Exception( "Utente non trovato" );
-            }
-        }
-
-        public void update (User u){
-            userRepository.save( u );
-        }
-
-        public Optional<User> findByUsername (String username) throws Exception {
-
-            return userRepository.findByUsername( username );
-        }
-
-        public Page<User> getAllPaginate (Pageable p){
-            return userRepository.findAll( p );
+    public void delete( Long id ) throws Exception {
+        Optional<User> u = userRepository.findById( id );
+        if( u.isPresent() ) {
+            userRepository.delete( u.get() );
+        } else {
+            throw new Exception( "Utente non trovato" );
         }
     }
+
+    public void update( User u ) {
+        userRepository.save( u );
+    }
+
+    public UserResponse updateResponse( UserRequest userRequest, Long id ) {
+        Optional<User> userFind = userRepository.findById( id );
+
+        if( userFind.isPresent() ) {
+            User u = new User();
+            u.setId( userFind.get().getId() );
+            u.setNomeCompleto( userRequest.getNomeCompleto() == null ? userFind.get().getNomeCompleto()
+                    : userRequest.getNomeCompleto() );
+            u.setEmail( userRequest.getEmail() == null ? userFind.get().getEmail() : userRequest.getEmail() );
+            u.setUsername( userRequest.getUsername() == null ? userFind.get().getUsername() :
+                    userRequest.getUsername() );
+            u.setPassword( userFind.get().getPassword() );
+            u.setRoles( userFind.get().getRoles() );
+            u.setActive( userFind.get().getActive() );
+
+            userRepository.save( u );
+            return UserResponse.parseUser( userFind.get() );
+        } else {
+            return null;
+        }
+
+
+    }
+
+    public Optional<User> findByUsername( String username ) throws Exception {
+
+        return userRepository.findByUsername( username );
+    }
+
+    public Page<User> getAllPaginate( Pageable p ) {
+        return userRepository.findAll( p );
+    }
+}

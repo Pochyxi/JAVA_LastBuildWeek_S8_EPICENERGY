@@ -13,18 +13,20 @@ import java.util.Set;
 @Setter
 @ToString
 public class UserResponse {
+    private Long id;
     private String nomeCompleto;
     private String email;
     private String username;
     private Set<Role> roles;
 
-    public static UserResponse parseUser( User user) {
+    public static UserResponse parseUser( User user ) {
 
         return UserResponse.builder()
-                .nomeCompleto(user.getNomeCompleto())
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .roles(user.getRoles())
+                .id( user.getId() )
+                .nomeCompleto( user.getNomeCompleto() )
+                .email( user.getEmail() )
+                .username( user.getUsername() )
+                .roles( user.getRoles() )
                 .build();
     }
 }
