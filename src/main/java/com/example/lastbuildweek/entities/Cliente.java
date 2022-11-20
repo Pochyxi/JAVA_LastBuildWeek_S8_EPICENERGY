@@ -1,7 +1,6 @@
 package com.example.lastbuildweek.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -17,6 +16,7 @@ import java.util.List;
 @Setter
 @ToString
 @Entity
+@Table(name = "clienti")
 public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,9 +57,5 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Fattura> fatture;
-
-    public void addDataInserimento() {
-        this.dataInserimento = LocalDate.now();
-    }
 
 }

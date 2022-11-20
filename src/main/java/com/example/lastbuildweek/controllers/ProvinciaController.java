@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,13 +24,14 @@ public class ProvinciaController {
     @Autowired
     private ProvinciaRepository provinciaRepository;
 
+    // GET BY NOME
     @GetMapping("/nome/{provincia}")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Provincia> getByNome( @PathVariable("provincia") String provincia) {
-        return provinciaRepository.findByNomeContainingIgnoreCase(provincia);
+    public ResponseEntity<List<Provincia>> getByNome( @PathVariable("provincia") String provincia) {
+        return new ResponseEntity<>( provinciaRepository.findByNomeContainingIgnoreCase(provincia), HttpStatus.OK );
     }
 
-    // RITORNA UNA SINGOLA PROVINCIA PER ID(PK)
+    // GET BY SIGLA
     @GetMapping("/{sigla}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Provincia> get( @PathVariable("sigla") String sigla ) throws Exception {
@@ -43,16 +43,16 @@ public class ProvinciaController {
     }
 
 
-    // AGGIUNGI UNA NUOVA PROVINCIA CON IL BODY COME RICHIESTA
+    // CREATE
     @PostMapping("/new-raw")
     @PreAuthorize("hasRole('ADMIN')")
-    public Provincia create( @RequestBody Provincia provincia ) {
+    public ResponseEntity<Provincia> create( @RequestBody Provincia provincia ) {
 
         try {
 
             provinciaService.save( provincia );
 
-            return provincia;
+            return new ResponseEntity<>( provincia, HttpStatus.OK );
 
         } catch( Exception e ) {
 
@@ -60,14 +60,14 @@ public class ProvinciaController {
 
         }
 
-        return null;
+        return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR );
 
     }
 
 
 
 
-    //AGGIORNA LE PROPRIETA' DI UN PROVINCIA
+    //UPDATE
     @PutMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     public void update( @RequestBody Provincia provincia ) {
@@ -84,6 +84,7 @@ public class ProvinciaController {
     }
 
 
+    // DELETE BY SIGLA
     @DeleteMapping("/delete/{sigla}")
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteById( @PathVariable("sigla") String sigla ) {

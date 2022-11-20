@@ -2,6 +2,7 @@ package com.example.lastbuildweek.controllers;
 
 import com.example.lastbuildweek.entities.Fattura;
 import com.example.lastbuildweek.entities.StatoFattura;
+import com.example.lastbuildweek.repositories.FatturaRepository;
 import com.example.lastbuildweek.services.ClienteService;
 import com.example.lastbuildweek.services.FatturaService;
 import com.example.lastbuildweek.utils.ConverDate;
@@ -16,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/fatture")
@@ -29,8 +31,24 @@ public class FatturaController {
     @Autowired
     private ClienteService clienteService;
 
+    @Autowired
+    FatturaRepository fatturaRepository;
 
-    // RITORNA UNA SINGOLA FATTURA PER ID(PK)
+    // GET ALL
+    @GetMapping("")
+    @PreAuthorize( "hasRole('ADMIN')" )
+    public ResponseEntity<List<Fattura>> getAll() {
+        return new ResponseEntity<>(fatturaRepository.findAll(), HttpStatus.OK);
+    }
+
+    // GET ALL AND PAGINATE
+    @GetMapping("/pageable")
+    @PreAuthorize( "hasRole('ADMIN')" )
+    public ResponseEntity<Page<Fattura>> getAllPageable( Pageable p) {
+        return new ResponseEntity<>(fatturaService.getAllPaginate( p ), HttpStatus.OK);
+    }
+
+    // GET BY ID
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Fattura> get(@PathVariable("id") Long id ) throws Exception {
@@ -39,6 +57,75 @@ public class FatturaController {
                 fatturaService.getById( id ),
                 HttpStatus.OK
         );
+    }
+
+
+
+
+    // CREATE
+    @PostMapping("/new-raw")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Fattura> create( @RequestBody FatturaRequest fatturaRequest ) {
+
+        try {
+
+            Fattura fattura = Fattura.builder()
+                    .anno(fatturaRequest.getAnno())
+                    .importo(fatturaRequest.getImporto())
+                    .statoFattura( StatoFattura.valueOf( fatturaRequest.getStatoFattura() ) )
+                    .cliente(clienteService.getById(fatturaRequest.getClienteId()))
+                    .data(LocalDate.now())
+                    .build();
+
+            fatturaService.save( fattura );
+
+            return new ResponseEntity<>( fattura, HttpStatus.OK ) ;
+
+        } catch( Exception e ) {
+
+            log.error( e.getMessage() );
+
+        }
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+
+
+
+    //UPDATE
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Fattura> update( @RequestBody FatturaRequest fatturaRequest, @PathVariable("id") Long id ) {
+
+        try {
+
+            return fatturaService.update( fatturaRequest, id );
+
+        } catch( Exception e ) {
+
+            log.error( e.getMessage() );
+
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    //DELETE
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteById( @PathVariable("id") Long id ) {
+
+        try {
+
+            fatturaService.delete( id );
+
+        } catch( Exception e ) {
+
+            log.error( e.getMessage() );
+
+        }
+
     }
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER CLIENTE ID(PK)
@@ -55,7 +142,7 @@ public class FatturaController {
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER STATO
     @GetMapping("/stato/{stato}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<Fattura>> getFatturaByStatoFattura( @PathVariable("stato") String stato, Pageable p ) throws Exception {
+    public ResponseEntity<Page<Fattura>> getFatturaByStatoFattura( @PathVariable("stato") String stato, Pageable p ) {
 
         return new ResponseEntity<>(
                 fatturaService.filterFatturaByStatoFattura( stato, p ),
@@ -66,7 +153,7 @@ public class FatturaController {
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER DATA(LOCALDATE)
     @GetMapping("/data/{data}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<Fattura>> getFatturaByDataLocal( @PathVariable("data") String data, Pageable p ) throws Exception {
+    public ResponseEntity<Page<Fattura>> getFatturaByDataLocal( @PathVariable("data") String data, Pageable p ) {
 
         return new ResponseEntity<>(
                 fatturaService.filterFatturaByDataLocal( ConverDate.convertDate( data ), p ),
@@ -77,7 +164,7 @@ public class FatturaController {
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER ANNO
     @GetMapping("/anno/{anno}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<Fattura>> getFatturaByAnno( @PathVariable("anno") int anno, Pageable p ) throws Exception {
+    public ResponseEntity<Page<Fattura>> getFatturaByAnno( @PathVariable("anno") int anno, Pageable p ) {
 
         return new ResponseEntity<>(
                 fatturaService.filterFatturaByAnno( anno, p ),
@@ -89,7 +176,7 @@ public class FatturaController {
     @GetMapping("/range/inizio/{inizio}/fine/{fine}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<Fattura>> getFatturaByRange( @PathVariable("inizio") int inizio,
-                                              @PathVariable("fine") int fine, Pageable p ) throws Exception {
+                                                            @PathVariable("fine") int fine, Pageable p ) {
 
         return new ResponseEntity<>(
                 fatturaService.filterFatturaByRange( inizio, fine, p ),
@@ -97,69 +184,4 @@ public class FatturaController {
         );
     }
 
-
-    // AGGIUNGI UNA NUOVA FATTURA CON IL BODY COME RICHIESTA
-    @PostMapping("/new-raw")
-    @PreAuthorize("hasRole('ADMIN')")
-    public Fattura create( @RequestBody FatturaRequest fatturaRequest ) {
-
-        try {
-
-            Fattura fattura = Fattura.builder()
-                    .anno(fatturaRequest.getAnno())
-                    .importo(fatturaRequest.getImporto())
-                    .statoFattura( StatoFattura.valueOf( fatturaRequest.getStatoFattura() ) )
-                    .cliente(clienteService.getById(fatturaRequest.getClienteId()))
-                    .data(LocalDate.now())
-                    .build();
-
-            fatturaService.save( fattura );
-
-            return fattura;
-
-        } catch( Exception e ) {
-
-            log.error( e.getMessage() );
-
-        }
-
-        return null;
-
-    }
-
-
-
-
-    //AGGIORNA LE PROPRIETA' DI UNA FATTURA
-    @PutMapping("")
-    @PreAuthorize("hasRole('ADMIN')")
-    public void update( @RequestBody Fattura fattura ) {
-
-        try {
-
-            fatturaService.save( fattura );
-
-        } catch( Exception e ) {
-
-            log.error( e.getMessage() );
-
-        }
-    }
-
-    //ELIMINA UNA FATTURA PER id
-    @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public void deleteById( @PathVariable("id") Long id ) {
-
-        try {
-
-            fatturaService.delete( id );
-
-        } catch( Exception e ) {
-
-            log.error( e.getMessage() );
-
-        }
-
-    }
 }

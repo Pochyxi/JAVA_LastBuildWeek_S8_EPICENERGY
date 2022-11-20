@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @Entity
+@Table(name = "fatture")
 public class Fattura {
 
     @Id

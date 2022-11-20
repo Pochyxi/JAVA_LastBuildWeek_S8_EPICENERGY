@@ -14,6 +14,7 @@ import java.util.List;
 @Setter
 @ToString
 @Entity
+@Table(name = "provincie")
 public class Provincia {
 
     @Id
@@ -23,6 +24,8 @@ public class Provincia {
 
     private String nome;
 
+
+    @Column(unique = true)
     private String sigla;
 
     private String regione;

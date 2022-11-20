@@ -28,12 +28,38 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    // GET BY ID
+    public User getById( Long id ) throws Exception {
+        Optional<User> user = userRepository.findById( id );
+        if( user.isEmpty() )
+            throw new Exception( "User not available" );
+        return user.get();
+    }
+
+    // GET BY USERNAME
+    public Optional<User> findByUsername( String username ) {
+
+        return userRepository.findByUsername( username );
+    }
+
+    // GET ALL
+    public List<User> getAll() {
+        return userRepository.findAll();
+    }
+
+    // GET ALL PAGEABLE
+    public Page<User> getAllPaginate( Pageable p ) {
+        return userRepository.findAll( p );
+    }
+
+    // CREATE
     public User save( User u ) {
         String psw = u.getPassword();
         u.setPassword( encoder.encode( psw ) );
         return userRepository.save( u );
     }
 
+    // CREATE AND SAVE
     public UserResponse createAndSave( UserRequest userRequest ) throws Exception {
         User u = new User();
         u.setNomeCompleto( userRequest.getNomeCompleto() );
@@ -49,30 +75,12 @@ public class UserService {
         return UserResponse.parseUser( u );
     }
 
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
-
-    public User getById( Long id ) throws Exception {
-        Optional<User> user = userRepository.findById( id );
-        if( user.isEmpty() )
-            throw new Exception( "User not available" );
-        return user.get();
-    }
-
-    public void delete( Long id ) throws Exception {
-        Optional<User> u = userRepository.findById( id );
-        if( u.isPresent() ) {
-            userRepository.delete( u.get() );
-        } else {
-            throw new Exception( "Utente non trovato" );
-        }
-    }
-
+    // UPDATE
     public void update( User u ) {
         userRepository.save( u );
     }
 
+    // UPDATE AND SAVE
     public UserResponse updateResponse( UserRequest userRequest, Long id ) {
         Optional<User> userFind = userRepository.findById( id );
 
@@ -97,12 +105,18 @@ public class UserService {
 
     }
 
-    public Optional<User> findByUsername( String username ) throws Exception {
-
-        return userRepository.findByUsername( username );
+    // DELETE
+    public void delete( Long id ) throws Exception {
+        Optional<User> u = userRepository.findById( id );
+        if( u.isPresent() ) {
+            userRepository.delete( u.get() );
+        } else {
+            throw new Exception( "Utente non trovato" );
+        }
     }
 
-    public Page<User> getAllPaginate( Pageable p ) {
-        return userRepository.findAll( p );
-    }
+
+
+
+
 }

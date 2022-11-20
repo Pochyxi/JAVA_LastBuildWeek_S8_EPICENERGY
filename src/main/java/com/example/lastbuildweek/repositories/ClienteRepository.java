@@ -15,7 +15,9 @@ import java.util.List;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
-    //QUERIES DI ORDINAMENTO
+    /////////////////////////////////////////////////////////////
+    ///////////////////////// ORDER BY /////////////////////////
+    /////////////////////////////////////////////////////////////
     @Query(
             value = "select c from Cliente c order by c.nomeContatto asc"
     )
@@ -40,7 +42,9 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     //---------------------------------FINE--------------------------------------------//
 
-    //QUERIES DI FILTRAGGIO
+    /////////////////////////////////////////////////////////////
+    ///////////////////////// FILTER BY /////////////////////////
+    /////////////////////////////////////////////////////////////
     @Query("select c from Cliente c where c.fatturatoAnnuo<=:param"
     )
     Page<Cliente> filterByFatturatoAnnuo( @Param("param") int fatturato, Pageable pageable );

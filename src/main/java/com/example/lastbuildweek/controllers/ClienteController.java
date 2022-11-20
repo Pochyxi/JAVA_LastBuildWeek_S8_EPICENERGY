@@ -28,9 +28,18 @@ public class ClienteController {
     @GetMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     @CrossOrigin
-    public List<Cliente> getAllClienti() {
+    public ResponseEntity<List<Cliente>> getAllClienti() {
 
-        return clienteService.getAll();
+        return new ResponseEntity<>( clienteService.getAll(), HttpStatus.OK );
+
+    }
+
+    @GetMapping("/pageable")
+    @PreAuthorize("hasRole('ADMIN')")
+    @CrossOrigin
+    public ResponseEntity<Page<Cliente>> getAllClientiPageable(Pageable p) {
+
+        return new ResponseEntity<>( clienteService.getAllPaginate(p), HttpStatus.OK );
 
     }
 
@@ -48,11 +57,11 @@ public class ClienteController {
     // CREATE
     @PostMapping("/new-raw")
     @PreAuthorize("hasRole('ADMIN')")
-    public ClienteResponse create( @RequestBody ClienteRequest clienteRequest ) {
+    public ResponseEntity<ClienteResponse> create( @RequestBody ClienteRequest clienteRequest ) {
 
         try {
 
-             return clienteService.createAndSave( clienteRequest );
+             return new ResponseEntity<>( clienteService.createAndSave( clienteRequest ), HttpStatus.OK );
 
         } catch( Exception e ) {
 
@@ -60,7 +69,7 @@ public class ClienteController {
 
         }
 
-        return null;
+        return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR );
 
     }
 
@@ -99,8 +108,9 @@ public class ClienteController {
 
     }
 
-    ///////////////////////// QUERY PERSONALIZZATE
-    /////////////////////////
+    ///////////////////////// QUERY PERSONALIZZATE/////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+
 
     // RITORNA UNA PAGINAZIONE DI TUTTI I CLIENTI ORDINATI PER NOME
     @GetMapping("/nome/")

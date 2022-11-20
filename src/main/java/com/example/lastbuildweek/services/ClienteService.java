@@ -30,49 +30,24 @@ public class ClienteService {
     @Autowired
     private IndirizzoService indirizzoService;
 
-
-    public void save( Cliente cliente ) {
-        clienteRepository.save( cliente );
-    }
-
+    // GETALL
     public List<Cliente> getAll() {
         return clienteRepository.findAll();
     }
 
-    public Cliente createAndUpdate( ClienteRequest clienteRequest, int clienteId ) throws Exception {
-        Optional<Cliente> clienteFind = clienteRepository.findById( ( long ) clienteId );
-        if( clienteFind.isPresent() ) {
-            Cliente cliente = Cliente.builder()
-                    .clienteId( clienteFind.get().getClienteId() )
-                    .partitaIva( clienteRequest.getPartitaIva() == 0 ? clienteFind.get().getPartitaIva() : clienteRequest.getPartitaIva() )
-                    .user( clienteRequest.getUserId() == 0 ? clienteFind.get().getUser() :
-                            userService.getById( ( long ) clienteRequest.getUserId() ) )
-                    .indirizzoLegale( clienteRequest.getIndirizzoLegaleId() == 0 ?
-                            indirizzoService.getById( clienteFind.get().getClienteId() ) :
-                            indirizzoService.getById( ( long ) clienteRequest.getIndirizzoLegaleId() ) )
-                    .indirizzoOperativo( clienteRequest.getIndirizzoOperativoId() == 0 ?
-                            clienteFind.get().getIndirizzoOperativo() : indirizzoService.getById( ( long ) clienteRequest.getIndirizzoOperativoId() ) )
-                    .email( clienteRequest.getEmail() == null ? clienteFind.get().getEmail() : clienteRequest.getEmail() )
-                    .pec( clienteRequest.getPec() == null ? clienteFind.get().getPec() : clienteRequest.getPec() )
-                    .emailContatto( clienteRequest.getEmailContatto() == null ? clienteFind.get().getEmailContatto() : clienteRequest.getEmailContatto() )
-                    .nomeContatto( clienteRequest.getNomeContatto() == null ? clienteFind.get().getNomeContatto() : clienteRequest.getNomeContatto() )
-                    .cognomeContatto( clienteRequest.getCognomeContatto() == null ? clienteFind.get().getCognomeContatto() : clienteRequest.getCognomeContatto() )
-                    .telefonoContatto( clienteRequest.getTelefonoContatto() == null ?
-                            clienteFind.get().getTelefonoContatto() : clienteRequest.getTelefonoContatto() )
-                    .ragioneSociale( clienteRequest.getRagioneSociale() == null ? clienteFind.get().getRagioneSociale() : RagioneSocialeParser.parse( clienteRequest.getRagioneSociale() ) )
-                    .fatturatoAnnuo( clienteRequest.getFatturatoAnnuo() == 0 ? clienteFind.get().getFatturatoAnnuo() : clienteRequest.getFatturatoAnnuo() )
-                    .dataInserimento( clienteFind.get().getDataInserimento() )
-                    .dataUltimoContatto( clienteFind.get().getDataUltimoContatto() )
-                .build();
-            clienteRepository.save( cliente );
-            return cliente;
-        } else {
-            throw new Exception( "Cliente not available" );
-        }
-
+    public Page<Cliente> getAllPaginate( Pageable p ) {
+        return clienteRepository.findAll( p );
     }
 
+    // GET BY ID
+    public Cliente getById( Long id ) throws Exception {
+        Optional<Cliente> cliente = clienteRepository.findById( id );
+        if( cliente.isEmpty() )
+            throw new Exception( "Cliente not available" );
+        return cliente.get();
+    }
 
+    // CREATE AND SAVE
     public ClienteResponse createAndSave( ClienteRequest clienteRequest ) throws Exception {
 
         Cliente cliente = Cliente.builder()
@@ -92,30 +67,13 @@ public class ClienteService {
                 .dataUltimoContatto( LocalDate.now() )
                 .build();
 
-         clienteRepository.save( cliente );
-         return ClienteResponse.parseCliente( cliente );
+        clienteRepository.save( cliente );
+
+        return ClienteResponse.parseCliente( cliente );
     }
 
-    ;
-
-
-    public Cliente getById( Long id ) throws Exception {
-        Optional<Cliente> cliente = clienteRepository.findById( id );
-        if( cliente.isEmpty() )
-            throw new Exception( "Cliente not available" );
-        return cliente.get();
-    }
-
-    public void delete( Long id ) throws Exception {
-        Optional<Cliente> cliente = clienteRepository.findById( id );
-        if( cliente.isPresent() ) {
-            clienteRepository.delete( cliente.get() );
-        } else {
-            throw new Exception( "Cliente non trovato" );
-        }
-    }
-
-    public void update( Cliente cliente ) {
+    // CREATE
+    public void save( Cliente cliente ) {
         clienteRepository.save( cliente );
     }
 
@@ -157,46 +115,72 @@ public class ClienteService {
         }
     }
 
-    public Page<Cliente> getAllPaginate( Pageable p ) {
-        return clienteRepository.findAll( p );
+    // UPDATE
+    public void update( Cliente cliente ) {
+        clienteRepository.save( cliente );
     }
 
+    // DELETE
+    public void delete( Long id ) throws Exception {
+        Optional<Cliente> cliente = clienteRepository.findById( id );
+        if( cliente.isPresent() ) {
+            clienteRepository.delete( cliente.get() );
+        } else {
+            throw new Exception( "Cliente non trovato" );
+        }
+    }
+
+    ///////////////////////// QUERY PERSONALIZZATE/////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+
+
+
+    ///////////////////////////////////// ORDER BY /////////////////////////////////
+
+    // GET BY NOME CONTATTO
     public Page<Cliente> getByNomeContatto( Pageable p ) {
         return clienteRepository.findByNomeContatto( p );
     }
 
-
+    // GET BY FATTURATO ANNUO
     public Page<Cliente> getByFatturatoAnnuo( Pageable p ) {
         return clienteRepository.findByFatturatoAnnuo( p );
     }
 
-
+    // GET BY DATA INSERIMENTO
     public Page<Cliente> getByDataInserimento( Pageable p ) {
         return clienteRepository.findByDataInserimento( p );
     }
 
+    // GET BY DATA ULTIMO CONTATTO
     public Page<Cliente> getByDataUltimoContatto( Pageable p ) {
         return clienteRepository.findByDataUltimoContatto( p );
     }
 
+    // GET BY NOME PROVNCIA
     public Page<Cliente> getByNomeProvincia( Pageable p ) {
         return clienteRepository.findByNomeProvincia( p );
     }
 
-    ////////////////////////////////////////////////////////////////
 
+    ////////////////////////////// FILTER BY //////////////////////////////////
+
+    // GET BY FATTURATO PARAM
     public Page<Cliente> filterByFatturato( int fatturato, Pageable p ) {
         return clienteRepository.filterByFatturatoAnnuo( fatturato, p );
     }
 
+    // GET BY DATA INSERIMENTO PARAM
     public Page<Cliente> filterByDataInserimento( LocalDate dataInserimento, Pageable p ) {
         return clienteRepository.filterByDataInserimento( dataInserimento, p );
     }
 
+    // GET BY DATA ULTIMO CONTATTO PARAM
     public Page<Cliente> filterByDataUltimoContatto( LocalDate data, Pageable p ) {
         return clienteRepository.filterByDataUltimoContatto( data, p );
     }
 
+    // GET BY NOME E COGNOME PARAMS
     public Page<Cliente> filterByNomeECognome( String nome, String cognome, Pageable p ) {
         return clienteRepository.filterByNomeECognome( nome, cognome, p );
     }

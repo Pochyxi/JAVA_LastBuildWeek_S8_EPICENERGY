@@ -17,18 +17,7 @@ public class RoleService {
 	@Autowired
 	RoleRepository repository;
 
-	public Role save( Role x) {
-		return repository.save(x);
-	}
-	
-	public Page<Role> getAllPaginate(Pageable p) {
-		return repository.findAll(p);
-	}
-
-	public List<Role> getAll() {
-		return repository.findAll();
-	}
-
+	// GET BY ID
 	public Role getById(Long id) throws Exception {
 		Optional<Role> ba = repository.findById(id);
 		if ( ba.isEmpty() )
@@ -36,14 +25,33 @@ public class RoleService {
 		return ba.get();
 	}
 
-	public void deleteById(Long id) {
-		repository.deleteById(id);
-	}
-
+	// GET BY ROLE
 	public Role getByRole( RoleType roleType) throws Exception {
 		Optional<Role> ba = repository.findByRoleType(roleType);
 		if ( ba.isEmpty() )
 			throw new Exception("Role not available");
 		return ba.get();
 	}
+
+	// GET ALL PAGEABLE
+	public Page<Role> getAllPaginate(Pageable p) {
+		return repository.findAll(p);
+	}
+
+	// GET ALL
+	public List<Role> getAll() {
+		return repository.findAll();
+	}
+
+	// CREATE
+	public Role save( Role x) {
+		return repository.save(x);
+	}
+
+	// DELETE
+	public void deleteById(Long id) {
+		repository.deleteById(id);
+	}
+
+
 }

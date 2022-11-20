@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/api/comuni")
 @Slf4j
@@ -21,13 +19,9 @@ public class ComuneController {
     @Autowired
     private ComuneService comuneService;
 
-    @PostMapping("/add-comune")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String addComune() throws Exception {
-        return comuneService.addComuni();
-    }
 
-    // RITORNA UN SINGOLO COMUNE PER ID(PK)
+
+    // RITORNA UN SINGOLO COMUNE PER NOME(PK)
     @GetMapping("/{nome}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Comune> getById( @PathVariable("nome") String nome ) throws Exception {
@@ -39,16 +33,16 @@ public class ComuneController {
     }
 
 
-    // AGGIUNGI UN NUOVO COMUNE CON IL BODY COME RICHIESTA
+    // CREATE
     @PostMapping("/new-raw")
     @PreAuthorize("hasRole('ADMIN')")
-    public Comune create( @RequestBody Comune comune ) {
+    public ResponseEntity<Comune> create( @RequestBody Comune comune ) {
 
         try {
 
             comuneService.save( comune );
 
-            return comune;
+            return new ResponseEntity<>( comune, HttpStatus.OK ) ;
 
         } catch( Exception e ) {
 
@@ -56,14 +50,14 @@ public class ComuneController {
 
         }
 
-        return null;
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
 
 
 
 
-    //AGGIORNA LE PROPRIETA' DI UN COMUNE
+    //UPDATE
     @PutMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     public void update( @RequestBody Comune comune ) {
@@ -79,7 +73,7 @@ public class ComuneController {
         }
     }
 
-
+    //DELETE
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteById( @PathVariable String id ) {

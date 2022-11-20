@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 public class ClienteResponse {
+
     private Long clienteId;
     private int partitaIva;
     private String userUsername;

@@ -20,12 +20,25 @@ public class IndirizzoService {
     @Autowired
     ComuneService comuneService;
 
+    // GET BY ID
+    public Indirizzo getById( Long id ) throws Exception {
+        Optional<Indirizzo> indirizzoLegale = indirizzoRepository.findById( id );
+        if( indirizzoLegale.isEmpty() )
+            throw new Exception( "Indirizzo not available" );
+        return indirizzoLegale.get();
+    }
+
+    // GET ALL
+    public Page<Indirizzo> getAllPaginate( Pageable p ) {
+        return indirizzoRepository.findAll( p );
+    }
+
+    // CREATE
     public void save( Indirizzo indirizzo ) {
         indirizzoRepository.save( indirizzo );
     }
 
-    ;
-
+    // CREATE AND SAVE
     public Indirizzo createAndSave( IndirizzoRequest indirizzoRequest ) throws Exception {
 
         Indirizzo indirizzo = Indirizzo.builder()
@@ -39,6 +52,12 @@ public class IndirizzoService {
         return indirizzo;
     }
 
+    // UPDATE
+    public void update( Indirizzo indirizzo ) {
+        indirizzoRepository.save( indirizzo );
+    }
+
+    // UPDATE AND SAVE
     public Indirizzo createAndUpdate( IndirizzoRequest indirizzoRequest ) throws Exception {
         Optional<Indirizzo> indirizzoFind = indirizzoRepository.findById( indirizzoRequest.getId() );
         if( indirizzoFind.isPresent() ) {
@@ -61,13 +80,7 @@ public class IndirizzoService {
 
     }
 
-    public Indirizzo getById( Long id ) throws Exception {
-        Optional<Indirizzo> indirizzoLegale = indirizzoRepository.findById( id );
-        if( indirizzoLegale.isEmpty() )
-            throw new Exception( "Indirizzo not available" );
-        return indirizzoLegale.get();
-    }
-
+    // DELETE
     public void delete( Long id ) throws Exception {
         Optional<Indirizzo> indirizzoLegale = indirizzoRepository.findById( id );
         if( indirizzoLegale.isPresent() ) {
@@ -77,11 +90,4 @@ public class IndirizzoService {
         }
     }
 
-    public void update( Indirizzo indirizzo ) {
-        indirizzoRepository.save( indirizzo );
-    }
-
-    public Page<Indirizzo> getAllPaginate( Pageable p ) {
-        return indirizzoRepository.findAll( p );
-    }
 }
