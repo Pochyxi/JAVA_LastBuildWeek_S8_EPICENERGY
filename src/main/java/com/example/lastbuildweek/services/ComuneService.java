@@ -1,7 +1,6 @@
 package com.example.lastbuildweek.services;
 
 import com.example.lastbuildweek.entities.Comune;
-import com.example.lastbuildweek.entities.Comune;
 import com.example.lastbuildweek.entities.Provincia;
 import com.example.lastbuildweek.repositories.ComuneRepository;
 import com.example.lastbuildweek.utils.CSVReader;
@@ -10,8 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 @Service
 public class ComuneService {
@@ -23,7 +20,39 @@ public class ComuneService {
     @Autowired
     ProvinciaService provinciaService;
 
-    public String addComuni() throws Exception {
+    // GET BY NOME
+    public Comune getByNome(String id) throws Exception {
+        Optional<Comune> comune = comuneRepository.findByNome(id);
+        if ( comune.isEmpty() )
+            throw new Exception("Comune not available");
+        return comune.get();
+    }
+
+    // CREATE
+    public void save(Comune comune){
+        comuneRepository.save(comune);
+    };
+
+    // UPDATE
+    public void update(Comune comune) {
+        comuneRepository.save(comune);
+    }
+
+
+    // DELETE
+    public void delete(String id) throws Exception {
+        Optional<Comune> comune = comuneRepository.findByNome(id);
+        if (comune.isPresent()) {
+            comuneRepository.delete(comune.get());
+        } else {
+            throw new Exception("Comune non trovato");
+        }
+    }
+
+    // METODO AUTOMATICO LANCIATO ALL'AVVIO DELL'APP NEL CASO IN CUI NEL DATABASE NON VENGA TROVATO IL COMUNE NAPOLI
+    // QUINDI SI PRESUPPONE CHE NEL DATABASE NON CI SIANO COMUNI
+    // DUNQUE SI PROVVEDERA' AD AGGIUNGERLI TUTTI
+    public void addComuni() throws Exception {
 
         CSVReader reader = new CSVReader();
 
@@ -78,39 +107,7 @@ public class ComuneService {
             } else {
                 count2++;
             }
-
-        }
-        return "ok";
-    }
-
-    public void save(Comune comune){
-        comuneRepository.save(comune);
-    };
-
-    public Comune getByNome(String id) throws Exception {
-        Optional<Comune> comune = comuneRepository.findByNome(id);
-        if ( comune.isEmpty() )
-            throw new Exception("Comune not available");
-        return comune.get();
-    }
-
-    public void delete(String id) throws Exception {
-        Optional<Comune> comune = comuneRepository.findByNome(id);
-        if (comune.isPresent()) {
-            comuneRepository.delete(comune.get());
-        } else {
-            throw new Exception("Comune non trovato");
         }
     }
-
-    public void update(Comune comune) {
-        comuneRepository.save(comune);
-    }
-
-    public Page<Comune> getAllPaginate(Pageable p) {
-        return comuneRepository.findAll(p);
-    }
-
-
 
 }

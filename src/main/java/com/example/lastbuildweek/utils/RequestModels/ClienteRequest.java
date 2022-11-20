@@ -1,6 +1,4 @@
 package com.example.lastbuildweek.utils.RequestModels;
-
-import com.example.lastbuildweek.entities.Cliente;
 import lombok.*;
 
 @Builder
@@ -23,4 +21,5 @@ public class ClienteRequest {
     private Long telefonoContatto;
     private String ragioneSociale;
     private int fatturatoAnnuo;
+
 }

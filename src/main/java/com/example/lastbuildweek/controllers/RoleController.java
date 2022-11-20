@@ -1,7 +1,7 @@
 package com.example.lastbuildweek.controllers;
 
 import com.example.lastbuildweek.entities.Role;
-import com.example.lastbuildweek.entities.RoleType;
+
 import com.example.lastbuildweek.services.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Slf4j
@@ -24,7 +24,7 @@ public class RoleController {
 	@Autowired
 	private RoleService rs;
 
-	// LISTA DEI RUOLI DISPONIBILI
+	// GET ALL
 	@GetMapping("")
 	@PreAuthorize( "hasRole('ADMIN')" )
 	public List<Role> getAllRoles() {
@@ -33,7 +33,7 @@ public class RoleController {
 
 	}
 
-	// LISTA DEI RUOLI DISPONIBILI PAGINABILE
+	// GET ALL PAGEABLE
 	@GetMapping("/pageable")
 	public ResponseEntity<Page<Role>> getAllRolesPageable(Pageable p) {
 		Page<Role> findAll = rs.getAllPaginate(p);
@@ -46,7 +46,7 @@ public class RoleController {
 
 	}
 
-	// RITORNA UN SINGOLO RUOLO PER ID(PK)
+	// GET BY ID
 	@GetMapping("/{id}")
 	@PreAuthorize( "hasRole('ADMIN')" )
 	public ResponseEntity<Role> readById(@PathVariable Long id) throws Exception {
@@ -55,7 +55,7 @@ public class RoleController {
 
 	}
 
-	// MODIFICA I RUOLI
+	// UPDATE
 	@PutMapping("")
 	@PreAuthorize( "hasRole('ADMIN')" )
 	public void update(@RequestBody Role role) {
@@ -72,7 +72,7 @@ public class RoleController {
 
 	}
 
-	// ELIMINA RUOLO
+	// DELETE
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public void deleteById(@PathVariable Long id) {

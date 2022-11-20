@@ -30,7 +30,7 @@ public class UserController {
     @Autowired
     private RoleService roleService;
 
-    //RITORNA TUTTI GLI UTENTI
+    //GET ALL
     @GetMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     @CrossOrigin
@@ -40,7 +40,7 @@ public class UserController {
 
     }
 
-    //RITORNA TUTTI GLI UTENTI CON POSSIBILITA' DI PAGINAZIONE
+    //GET ALL PAGEABLE
     @GetMapping("/pageable")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<User>> getAllUsersPageable( Pageable p ) {
@@ -55,7 +55,7 @@ public class UserController {
 
     }
 
-    // RITORNA UN SINGOLO USER PER ID(PK)
+    // GET BY ID
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> getById( @PathVariable Long id ) throws Exception {
@@ -66,10 +66,10 @@ public class UserController {
         );
     }
 
-    //RITORNA TUTTI GLI UTENTI PER USERNAME(PK)
+    //GET BY USERNAME (UNIQUE)
     @GetMapping("/username/{username}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> getByUsername( @PathVariable String username ) throws Exception {
+    public ResponseEntity<User> getByUsername( @PathVariable String username ) {
 
         return new ResponseEntity<>(
                 userService.findByUsername( username ).isPresent() ?
@@ -100,7 +100,7 @@ public class UserController {
     }
 
 
-    //AGGIORNA LE PROPRIETA' DI UN UTENTE
+    // UPDATE
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponse> update( @RequestBody UserRequest user, @PathVariable("id") Long id ) {
@@ -118,7 +118,7 @@ public class UserController {
         return new ResponseEntity<>( HttpStatus.NOT_FOUND);
     }
 
-    // AGGIUNGI UN NUOVO RUOLO ALL'UTENTE
+    // ADD ROLE ADMIN
     @PutMapping("/{id}/add-role/{roleType}")
     @PreAuthorize("hasRole('ADMIN')")
     public void addRole(
@@ -138,6 +138,7 @@ public class UserController {
 
     }
 
+    // DELETE
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteById( @PathVariable Long id ) {

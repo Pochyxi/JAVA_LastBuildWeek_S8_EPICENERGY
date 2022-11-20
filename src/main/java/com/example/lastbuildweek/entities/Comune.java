@@ -12,6 +12,7 @@ import javax.persistence.*;
 @Setter
 @ToString
 @Entity
+@Table(name = "comuni")
 public class Comune {
 
     @Id

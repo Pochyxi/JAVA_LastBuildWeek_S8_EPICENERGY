@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Setter
 @ToString
 @Entity
+@Table(name = "indirizzi")
 public class Indirizzo {
 
     @Id

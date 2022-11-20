@@ -10,17 +10,10 @@ import lombok.*;
 @Setter
 @ToString
 public class UserRequest {
+
     private String nomeCompleto;
     private String email;
     private String username;
     private String password;
 
-    public static UserRequest parseUser( User user) {
-        return UserRequest.builder()
-               .nomeCompleto(user.getNomeCompleto())
-               .email(user.getEmail())
-               .username(user.getUsername())
-               .password(user.getPassword())
-               .build();
-    }
 }
