@@ -1,6 +1,7 @@
 package com.example.lastbuildweek.controllers;
 
 import com.example.lastbuildweek.entities.*;
+import com.example.lastbuildweek.repositories.ClienteRepository;
 import com.example.lastbuildweek.services.*;
 import com.example.lastbuildweek.utils.RequestModels.ClienteRequest;
 import com.example.lastbuildweek.utils.ResponseModels.ClienteResponse;
@@ -23,6 +24,9 @@ import java.util.List;
 public class ClienteController {
     @Autowired
     private ClienteService clienteService;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
 
     //GET ALL
     @GetMapping("")
@@ -111,6 +115,16 @@ public class ClienteController {
     ///////////////////////// QUERY PERSONALIZZATE/////////////////////////
     ///////////////////////////////////////////////////////////////////////
 
+
+    // RITORNA UNA LISTA DI CLIENTI ORDINATI PER USER ID
+    @GetMapping("/user/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Cliente>> getClietiByUserId( @PathVariable("id") Long id ) {
+        return new ResponseEntity<>(
+                clienteRepository.findClienteByUserId( id ),
+                HttpStatus.OK
+        );
+    }
 
     // RITORNA UNA PAGINAZIONE DI TUTTI I CLIENTI ORDINATI PER NOME
     @GetMapping("/nome/")

@@ -63,5 +63,9 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     )
     Page<Cliente> filterByNomeECognome( @Param("nome") String nome, @Param("cognome") String cognome, Pageable pageable );
 
+    @Query(
+            value = "select c from Cliente c where c.user.id = :id"
+    )
+    List<Cliente> findClienteByUserId(@Param( "id" ) Long id);
 
 }
