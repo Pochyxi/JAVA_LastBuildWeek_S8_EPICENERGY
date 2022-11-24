@@ -4,6 +4,7 @@ import com.example.lastbuildweek.entities.Cliente;
 import com.example.lastbuildweek.entities.RagioneSociale;
 import com.example.lastbuildweek.entities.User;
 import com.example.lastbuildweek.repositories.ClienteRepository;
+import com.example.lastbuildweek.repositories.UserRepository;
 import com.example.lastbuildweek.utils.RequestModels.ClienteRequest;
 import com.example.lastbuildweek.utils.ResponseModels.ClienteResponse;
 import com.example.lastbuildweek.utils.RagioneSocialeParser;
@@ -26,6 +27,9 @@ public class ClienteService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private IndirizzoService indirizzoService;
@@ -77,13 +81,15 @@ public class ClienteService {
         clienteRepository.save( cliente );
     }
 
-    public ClienteResponse updateResponse( ClienteRequest clienteRequest, Long id) throws Exception {
+    public ClienteResponse updateResponse( ClienteRequest clienteRequest, Long id ) throws Exception {
         Optional<Cliente> clienteFind = clienteRepository.findById( id );
 
         if( clienteFind.isPresent() ) {
             Cliente c = new Cliente();
             c.setClienteId( id );
-            c.setUser( clienteFind.get().getUser() );
+            c.setUser( clienteRequest.getUserId() == 0 ? clienteFind.get().getUser() :
+                    userRepository.findById( ( long ) clienteRequest.getUserId() ).isPresent() ?
+                            userRepository.findById( ( long ) clienteRequest.getUserId() ).get() : clienteFind.get().getUser() );
             c.setPartitaIva( clienteRequest.getPartitaIva() == 0 ? clienteFind.get().getPartitaIva() :
                     clienteRequest.getPartitaIva() );
             c.setIndirizzoLegale( clienteRequest.getIndirizzoLegaleId() == 0 ?
@@ -132,7 +138,6 @@ public class ClienteService {
 
     ///////////////////////// QUERY PERSONALIZZATE/////////////////////////
     ///////////////////////////////////////////////////////////////////////
-
 
 
     ///////////////////////////////////// ORDER BY /////////////////////////////////
