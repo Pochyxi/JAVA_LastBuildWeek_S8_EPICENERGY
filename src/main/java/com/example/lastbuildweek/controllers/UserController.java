@@ -79,6 +79,18 @@ public class UserController {
 
     }
 
+    // GET BY USERNAME CONTAINS
+    @GetMapping("/username-contains/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getByUsernameContains( @PathVariable String username ) {
+
+        return new ResponseEntity<>(
+                userService.findByUsernameContains( username ),
+                HttpStatus.OK
+        );
+
+    }
+
     // AGGIUNGI UN NUOVO UTENTE CON IL BODY COME RICHIESTA
     @PostMapping("/new-raw")
 //    @PreAuthorize("hasRole('ADMIN')")
