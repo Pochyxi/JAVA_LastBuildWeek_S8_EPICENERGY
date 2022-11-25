@@ -49,7 +49,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     )
     Page<Cliente> filterByFatturatoAnnuo( @Param("param") int fatturato, Pageable pageable );
 
-    @Query("select c from Cliente c where c.dataInserimento>=:param"
+    @Query("select c from Cliente c where c.dataInserimento=:param"
     )
     Page<Cliente> filterByDataInserimento( @Param("param") LocalDate dataInserimento, Pageable pageable );
 
