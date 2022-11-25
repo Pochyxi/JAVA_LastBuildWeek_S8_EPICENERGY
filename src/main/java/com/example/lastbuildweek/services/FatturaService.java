@@ -2,6 +2,7 @@ package com.example.lastbuildweek.services;
 
 import com.example.lastbuildweek.entities.Fattura;
 import com.example.lastbuildweek.entities.StatoFattura;
+import com.example.lastbuildweek.repositories.ClienteRepository;
 import com.example.lastbuildweek.repositories.FatturaRepository;
 import com.example.lastbuildweek.utils.RequestModels.FatturaRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ import java.util.Optional;
 public class FatturaService {
     @Autowired
     FatturaRepository fatturaRepository;
+
+    @Autowired
+    ClienteRepository clienteRepository;
 
     // GET BY ID
     public Fattura getById( Long id ) throws Exception {
@@ -52,7 +56,10 @@ public class FatturaService {
                             fatturaRequest.getImporto() )
                     .statoFattura( fatturaRequest.getStatoFattura() == null ? fatturaFinded.get().getStatoFattura() :
                             StatoFattura.valueOf( fatturaRequest.getStatoFattura() ) )
-                    .cliente( fatturaFinded.get().getCliente() )
+                    .cliente(fatturaRequest.getClienteId() == 0 ? fatturaFinded.get().getCliente() :
+                            clienteRepository.findById( fatturaRequest.getClienteId() ).isPresent() ?
+                                    clienteRepository.findById( fatturaRequest.getClienteId() ).get() :
+                                    fatturaFinded.get().getCliente())
                     .data( fatturaFinded.get().getData() )
 
                     .build();
