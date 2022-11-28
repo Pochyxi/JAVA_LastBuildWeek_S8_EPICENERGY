@@ -32,25 +32,25 @@ public class FatturaController {
     private ClienteService clienteService;
 
     @Autowired
-    FatturaRepository fatturaRepository;
+    private FatturaRepository fatturaRepository;
 
     // GET ALL
     @GetMapping("")
-    @PreAuthorize( "hasRole('ADMIN')" )
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<List<Fattura>> getAll() {
         return new ResponseEntity<>(fatturaRepository.findAll(), HttpStatus.OK);
     }
 
     // GET ALL AND PAGINATE
     @GetMapping("/pageable")
-    @PreAuthorize( "hasRole('ADMIN')" )
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Fattura>> getAllPageable( Pageable p) {
         return new ResponseEntity<>(fatturaService.getAllPaginate( p ), HttpStatus.OK);
     }
 
     // GET BY ID
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Fattura> get(@PathVariable("id") Long id ) throws Exception {
 
         return new ResponseEntity<>(
@@ -64,7 +64,7 @@ public class FatturaController {
 
     // CREATE
     @PostMapping("/new-raw")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Fattura> create( @RequestBody FatturaRequest fatturaRequest ) {
 
         try {
@@ -96,7 +96,7 @@ public class FatturaController {
 
     //UPDATE
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Fattura> update( @RequestBody FatturaRequest fatturaRequest, @PathVariable("id") Long id ) {
 
         try {
@@ -113,7 +113,7 @@ public class FatturaController {
 
     //DELETE
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public void deleteById( @PathVariable("id") Long id ) {
 
         try {
@@ -130,7 +130,7 @@ public class FatturaController {
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER CLIENTE ID(PK)
     @GetMapping("/cliente/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Fattura>> get( @PathVariable("id") Long id, Pageable p ) throws Exception {
 
         return new ResponseEntity<>(
@@ -141,7 +141,7 @@ public class FatturaController {
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER STATO
     @GetMapping("/stato/{stato}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Fattura>> getFatturaByStatoFattura( @PathVariable("stato") String stato, Pageable p ) {
 
         return new ResponseEntity<>(
@@ -152,7 +152,7 @@ public class FatturaController {
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER DATA(LOCALDATE)
     @GetMapping("/data/{data}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Fattura>> getFatturaByDataLocal( @PathVariable("data") String data, Pageable p ) {
 
         return new ResponseEntity<>(
@@ -163,7 +163,7 @@ public class FatturaController {
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER ANNO
     @GetMapping("/anno/{anno}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Fattura>> getFatturaByAnno( @PathVariable("anno") int anno, Pageable p ) {
 
         return new ResponseEntity<>(
@@ -174,7 +174,7 @@ public class FatturaController {
 
     // RITORNA UNA LISTA DI FATTURE FILTRATE PER RANGE DI IMPORTI
     @GetMapping("/range/inizio/{inizio}/fine/{fine}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Fattura>> getFatturaByRange( @PathVariable("inizio") int inizio,
                                                             @PathVariable("fine") int fine, Pageable p ) {
 

@@ -32,7 +32,7 @@ public class UserController {
 
     //GET ALL
     @GetMapping("")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @CrossOrigin
     public List<User> getAllUsers() {
 

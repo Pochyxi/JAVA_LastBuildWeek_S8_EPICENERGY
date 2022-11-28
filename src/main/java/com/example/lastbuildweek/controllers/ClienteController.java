@@ -30,7 +30,7 @@ public class ClienteController {
 
     //GET ALL
     @GetMapping("")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @CrossOrigin
     public ResponseEntity<List<Cliente>> getAllClienti() {
 
@@ -39,7 +39,7 @@ public class ClienteController {
     }
 
     @GetMapping("/pageable")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @CrossOrigin
     public ResponseEntity<Page<Cliente>> getAllClientiPageable(Pageable p) {
 
@@ -49,7 +49,7 @@ public class ClienteController {
 
     // GET
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Cliente> getById( @PathVariable Long id ) throws Exception {
 
         return new ResponseEntity<>(
@@ -60,7 +60,7 @@ public class ClienteController {
 
     // CREATE
     @PostMapping("/new-raw")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ClienteResponse> create( @RequestBody ClienteRequest clienteRequest ) {
 
         try {
@@ -79,7 +79,7 @@ public class ClienteController {
 
     //UPDATE
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ClienteResponse> update( @RequestBody ClienteRequest clienteRequest, @PathVariable("id") Long id  ) {
 
         try {
@@ -97,7 +97,7 @@ public class ClienteController {
 
     //DELETE
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public void deleteById( @PathVariable Long id ) {
 
         try {
@@ -118,7 +118,7 @@ public class ClienteController {
 
     // RITORNA UNA LISTA DI CLIENTI ORDINATI PER USER ID
     @GetMapping("/user/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<List<Cliente>> getClietiByUserId( @PathVariable("id") Long id ) {
         return new ResponseEntity<>(
                 clienteRepository.findClienteByUserId( id ),
@@ -128,7 +128,7 @@ public class ClienteController {
 
     // RITORNA UNA PAGINAZIONE DI TUTTI I CLIENTI ORDINATI PER NOME
     @GetMapping("/nome/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Cliente>> getByNomeContatto( Pageable p ) {
         return new ResponseEntity<>(
                 clienteService.getByNomeContatto( p ),
@@ -140,7 +140,7 @@ public class ClienteController {
     //RITORNA UNA PAGINAZIONE DI TUTTI I CLIENTI ORDINATI PER FATTURATO ANNUO
 
     @GetMapping("/fatturato-annuo/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Cliente>> getByFatturatoAnnuo( Pageable p ) {
         return new ResponseEntity<>(
                 clienteService.getByFatturatoAnnuo( p ),
@@ -150,7 +150,7 @@ public class ClienteController {
 
     //RITORNA UNA PAGINAZIONE DI TUTTI I CLIENTI ORDINATI PER FATTURATO ANNUO
     @GetMapping("/data-inserimento/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Cliente>> getByDataInserimento( Pageable p ) {
         return new ResponseEntity<>(
                 clienteService.getByDataInserimento( p ),
@@ -159,7 +159,7 @@ public class ClienteController {
     }
 
     @GetMapping("/data-ultimo-contatto/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Cliente>> getByDataUltimoContatto( Pageable p ) {
         return new ResponseEntity<>(
                 clienteService.getByDataUltimoContatto( p ),
@@ -169,7 +169,7 @@ public class ClienteController {
 
     //RITORNA UNA LISTA DI CLIENTI ORDINATI PER PROVINCIA
     @GetMapping("/provincia/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Cliente>> getByNomeProvincia( Pageable p ) {
         return new ResponseEntity<>(
                 clienteService.getByNomeProvincia( p ),
@@ -180,7 +180,7 @@ public class ClienteController {
 
     //RITORNA UNA LISTA DI CLIENTI FILTRATI PER FATTURATO ANNUO < DI UN PARAMETRO DATO
     @GetMapping("/fatturato/{fatturato}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Cliente>> getByFatturato( @PathVariable("fatturato") int fatturato, Pageable p ) {
         return new ResponseEntity<>(
                 clienteService.filterByFatturato( fatturato, p ),
@@ -190,7 +190,7 @@ public class ClienteController {
 
     //    //RITORNA UNA LISTA DI CLIENTI FILTRATI PER DATA INSERIMENTO
     @GetMapping("/filter-data-inserimento/{data}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Cliente>> getByDataInserimento( @PathVariable("data") String stringData, Pageable p ) {
 
         return new ResponseEntity<>(
@@ -201,7 +201,7 @@ public class ClienteController {
 
     // RITORNA UNA LISTA DI CLIENTI FILTRATI PER DATA ULTIMO CONTATTO
     @GetMapping("/filter-data-ultimo-contatto/{data}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Cliente>> getByDataUltimoInserimento( @PathVariable("data") String stringData, Pageable p ) {
 
         return new ResponseEntity<>(
@@ -212,7 +212,7 @@ public class ClienteController {
 
     // RITORNA UNA LISTA DI CLIENTI FILTRATI PER NOME E COGNOME
     @GetMapping("/filter-nome-cognome/{nome}/{cognome}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<Cliente>> filterByNomeECognome( @PathVariable("nome") String nome,
                                                                @PathVariable("cognome") String cognome,
                                                                Pageable p ) {
